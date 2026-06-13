@@ -3,7 +3,7 @@ import { fileURLToPath, URL } from 'node:url';
 import tailwindcss from '@tailwindcss/vite';
 import Vue from '@vitejs/plugin-vue';
 import Fonts from 'unplugin-fonts/vite';
-import { defineConfig } from 'vitest/config';
+import { configDefaults, defineConfig } from 'vitest/config';
 import Vuetify, { transformAssetUrls } from 'vite-plugin-vuetify';
 
 // https://vitejs.dev/config/
@@ -47,13 +47,34 @@ export default defineConfig({
     port: 3000,
   },
   test: {
+    coverage: {
+      provider: 'v8',
+      exclude: [
+        ...configDefaults.exclude,
+        '**/*.d.ts',
+        '**/*.config.*',
+        'dist/',
+        'package.json',
+        'src/**/__mocks__',
+        'src/models',
+        'src/plugins',
+        'src/router',
+        'src/*.vue',
+        'src/*.ts',
+        'src/composables/firebase-app.ts',
+      ],
+    },
+    clearMocks: true,
+    env: {
+      NODE_OPTIONS: '--localstorage-file=./vite-storage',
+    },
     globals: true,
     environment: 'jsdom',
-    passWithNoTests: true,
     server: {
       deps: {
         inline: ['vuetify'],
       },
     },
+    setupFiles: './vitest.setup.ts',
   },
 });
