@@ -1,7 +1,7 @@
 # For a complete example, see: https://okigu.com/ruler#complete-example
 
-# List of agents to configure
-default_agents = ["copilot", "claude", "trae"]
+# Agents that receive rules when running `pnpm mcp` (ruler apply)
+default_agents = ["cursor", "copilot", "claude", "codex"]
 
 [mcp_servers.vuetify]
 url = "https://mcp.vuetifyjs.com/mcp"
