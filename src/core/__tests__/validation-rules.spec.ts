@@ -12,7 +12,7 @@ describe('Validation Rules', () => {
       expect(validationRules.required({ message: 'hello' })).toBe(true);
     });
 
-    it('returns "Required." if there is no value', () => {
+    it('returns "Required" if there is no value', () => {
       expect(validationRules.required(undefined)).toBe('Required');
       expect(validationRules.required(null)).toBe('Required');
       expect(validationRules.required('')).toBe('Required');
@@ -28,7 +28,7 @@ describe('Validation Rules', () => {
       expect(validationRules.email('   ')).toBe(true);
     });
 
-    it('return true for valid e-mail addresses', () => {
+    it('returns true for valid e-mail addresses', () => {
       expect(validationRules.email('test@test-data.com')).toBe(true);
       expect(validationRules.email('test@test.com')).toBe(true);
       expect(validationRules.email('foo+bar@test.com')).toBe(true);

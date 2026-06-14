@@ -126,7 +126,7 @@ describe('LoginCard', () => {
     await passwordInput.trigger('blur');
     expect(wrapper.text()).toContain('Required');
 
-    await passwordInput.setValue('foorbar');
+    await passwordInput.setValue('foobar');
     await passwordInput.trigger('blur');
     expect(wrapper.text()).not.toContain('Required');
   });

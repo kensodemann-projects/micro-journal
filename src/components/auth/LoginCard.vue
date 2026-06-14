@@ -54,6 +54,7 @@ defineProps({ loading: Boolean });
 const emit = defineEmits(['login', 'resetPassword']);
 
 const login = async () => {
+  if (!valid.value) return;
   if (resetMode.value) {
     emit('resetPassword', {
       email: email.value,
@@ -63,7 +64,6 @@ const login = async () => {
       email: email.value,
       password: password.value,
     });
-    resetMode.value = false;
   }
 };
 
