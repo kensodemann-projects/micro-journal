@@ -1,7 +1,17 @@
 <template>
   <div data-testid="login-page">
-    <LoginCard class="auth-card" :loading="loading" @login="login" @resetPassword="resetPassword" />
-    <v-alert v-if="message" :type="messageType" class="feedback-message mt-4" @click="clearMessage">
+    <LoginCard
+      class="mt-[25%] mx-[5%] sm:mt-[20%] sm:mx-[10%] md:mt-[10%] md:mx-[20%] lg:mx-[25%] xl:mx-[30%]"
+      :loading="loading"
+      @login="login"
+      @resetPassword="resetPassword"
+    />
+    <v-alert
+      v-if="message"
+      :type="messageType"
+      class="mt-4 mx-[5%] sm:mx-[10%] md:mx-[20%] lg:mx-[25%] xl:mx-[30%]"
+      @click="clearMessage"
+    >
       {{ message }}
     </v-alert>
   </div>
@@ -18,7 +28,7 @@ const messageType = ref<'error' | 'success'>('error');
 const login = () => {
   loading.value = true;
   message.value = 'Login failed. Please try again.';
-  messageType.value = 'success';
+  messageType.value = 'error';
   setTimeout(() => {
     loading.value = false;
   }, 1000);
@@ -35,73 +45,6 @@ const clearMessage = () => {
   message.value = '';
 };
 </script>
-
-<style scoped>
-@media (min-width: 0px) {
-  .auth-card {
-    margin-top: 25%;
-    margin-left: 5%;
-    margin-right: 5%;
-  }
-
-  .feedback-message {
-    margin-left: 5%;
-    margin-right: 5%;
-  }
-}
-
-@media (min-width: 576px) {
-  .auth-card {
-    margin-top: 20%;
-    margin-left: 10%;
-    margin-right: 10%;
-  }
-
-  .feedback-message {
-    margin-left: 10%;
-    margin-right: 10%;
-  }
-}
-
-@media (min-width: 768px) {
-  .auth-card {
-    margin-top: 10%;
-    margin-left: 20%;
-    margin-right: 20%;
-  }
-
-  .feedback-message {
-    margin-left: 20%;
-    margin-right: 20%;
-  }
-}
-
-@media (min-width: 992px) {
-  .auth-card {
-    margin-top: 10%;
-    margin-left: 25%;
-    margin-right: 25%;
-  }
-
-  .feedback-message {
-    margin-left: 25%;
-    margin-right: 25%;
-  }
-}
-
-@media (min-width: 1200px) {
-  .auth-card {
-    margin-top: 10%;
-    margin-left: 30%;
-    margin-right: 30%;
-  }
-
-  .feedback-message {
-    margin-left: 30%;
-    margin-right: 30%;
-  }
-}
-</style>
 
 <route lang="yaml">
 meta:
