@@ -10,9 +10,13 @@ import '../styles/layers.css';
 import 'vuetify/styles';
 
 export default createVuetify({
+  defaults: {
+    VAlert: {
+      variant: 'tonal',
+    },
+  },
   theme: {
     defaultTheme: 'system',
-    utilities: false,
   },
   display: {
     mobileBreakpoint: 'md',

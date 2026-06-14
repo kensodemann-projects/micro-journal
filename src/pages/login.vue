@@ -1,6 +1,9 @@
 <template>
   <div data-testid="login-page">
     <LoginCard class="auth-card" :loading="loading" @login="login" @resetPassword="resetPassword" />
+    <v-alert v-if="message" :type="messageType" class="feedback-message mt-4" @click="clearMessage">
+      {{ message }}
+    </v-alert>
   </div>
 </template>
 
@@ -9,9 +12,13 @@ import LoginCard from '@/components/auth/LoginCard.vue';
 import { ref } from 'vue';
 
 const loading = ref(false);
+const message = ref('');
+const messageType = ref<'error' | 'success'>('error');
 
 const login = () => {
   loading.value = true;
+  message.value = 'Login failed. Please try again.';
+  messageType.value = 'success';
   setTimeout(() => {
     loading.value = false;
   }, 1000);
@@ -22,6 +29,10 @@ const resetPassword = () => {
   setTimeout(() => {
     loading.value = false;
   }, 1000);
+};
+
+const clearMessage = () => {
+  message.value = '';
 };
 </script>
 
