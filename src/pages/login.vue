@@ -1,11 +1,28 @@
 <template>
   <div data-testid="login-page">
-    <LoginCard />
+    <LoginCard class="auth-card" :loading="loading" @login="login" @resetPassword="resetPassword" />
   </div>
 </template>
 
 <script lang="ts" setup>
 import LoginCard from '@/components/auth/LoginCard.vue';
+import { ref } from 'vue';
+
+const loading = ref(false);
+
+const login = () => {
+  loading.value = true;
+  setTimeout(() => {
+    loading.value = false;
+  }, 1000);
+};
+
+const resetPassword = () => {
+  loading.value = true;
+  setTimeout(() => {
+    loading.value = false;
+  }, 1000);
+};
 </script>
 
 <style scoped>
@@ -16,7 +33,7 @@ import LoginCard from '@/components/auth/LoginCard.vue';
     margin-right: 5%;
   }
 
-  .error-message {
+  .feedback-message {
     margin-left: 5%;
     margin-right: 5%;
   }
@@ -29,7 +46,7 @@ import LoginCard from '@/components/auth/LoginCard.vue';
     margin-right: 10%;
   }
 
-  .error-message {
+  .feedback-message {
     margin-left: 10%;
     margin-right: 10%;
   }
@@ -42,7 +59,7 @@ import LoginCard from '@/components/auth/LoginCard.vue';
     margin-right: 20%;
   }
 
-  .error-message {
+  .feedback-message {
     margin-left: 20%;
     margin-right: 20%;
   }
@@ -55,7 +72,7 @@ import LoginCard from '@/components/auth/LoginCard.vue';
     margin-right: 25%;
   }
 
-  .error-message {
+  .feedback-message {
     margin-left: 25%;
     margin-right: 25%;
   }
@@ -68,7 +85,7 @@ import LoginCard from '@/components/auth/LoginCard.vue';
     margin-right: 30%;
   }
 
-  .error-message {
+  .feedback-message {
     margin-left: 30%;
     margin-right: 30%;
   }

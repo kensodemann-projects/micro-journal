@@ -213,7 +213,7 @@ describe('LoginCard', () => {
 
   it('applies correct CSS classes', () => {
     wrapper = createWrapper();
-    const card = wrapper.find('.auth-card');
+    const card = wrapper.findComponent(components.VCard);
     expect(card.exists()).toBe(true);
     expect(card.classes()).toContain('pa-5');
   });

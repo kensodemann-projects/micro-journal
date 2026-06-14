@@ -1,5 +1,5 @@
 <template>
-  <v-card class="auth-card pa-5">
+  <v-card class="pa-5">
     <v-card-title class="text-h5">{{
       resetMode ? 'Get Password Reset Instructions' : 'Login to Your Account'
     }}</v-card-title>
