@@ -1,0 +1,88 @@
+import { AuthError, getMe, postLogin, requestResetLink, updatePassword } from '@/core/auth/auth-api';
+import { clearToken, getToken, setToken } from '@/core/auth/token-storage';
+import type { ChangePasswordPayload, LoginCredentials, UseAuthentication, User } from '@/core/auth/types';
+import { ref } from 'vue';
+
+const user = ref<User | null>(null);
+let sessionRestorePromise: Promise<boolean> | null = null;
+
+async function hydrateUserFromToken(token: string): Promise<boolean> {
+  try {
+    user.value = await getMe(token);
+    return true;
+  } catch (error) {
+    if (error instanceof AuthError && error.status === 401) {
+      clearToken();
+      user.value = null;
+      return false;
+    }
+    throw error;
+  }
+}
+
+async function restoreSessionIfNeeded(): Promise<boolean> {
+  if (user.value) {
+    return true;
+  }
+
+  const token = getToken();
+  if (!token) {
+    return false;
+  }
+
+  if (!sessionRestorePromise) {
+    sessionRestorePromise = hydrateUserFromToken(token).finally(() => {
+      sessionRestorePromise = null;
+    });
+  }
+
+  return sessionRestorePromise;
+}
+
+export function useAuthentication(): UseAuthentication {
+  void restoreSessionIfNeeded();
+
+  const isAuthenticated = async (): Promise<boolean> => {
+    const token = getToken();
+    if (!token) {
+      user.value = null;
+      return false;
+    }
+
+    return hydrateUserFromToken(token);
+  };
+
+  const login = async (credentials: LoginCredentials): Promise<unknown> => {
+    const { authToken } = await postLogin(credentials);
+    setToken(authToken);
+    await hydrateUserFromToken(authToken);
+    return { authToken, user_id: user.value?.id };
+  };
+
+  const logout = async (): Promise<void> => {
+    clearToken();
+    user.value = null;
+  };
+
+  const sendPasswordReset = async (payload: { email: string }): Promise<void> => {
+    await requestResetLink(payload.email);
+  };
+
+  const changePassword = async (payload: ChangePasswordPayload): Promise<void> => {
+    const token = getToken();
+    if (!token) {
+      throw new AuthError(401, 'Not authenticated');
+    }
+
+    await updatePassword(token, payload);
+  };
+
+  return {
+    user,
+    isAuthenticated,
+    login,
+    logout,
+    sendPasswordReset,
+    changePassword,
+  };
+}

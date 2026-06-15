@@ -1,5 +1,6 @@
 import { vi } from 'vitest';
 import { ref } from 'vue';
+import type { UseAuthentication } from '@/core/auth/types';
 
 const isAuthenticated = vi.fn().mockResolvedValue(false);
 const login = vi.fn().mockResolvedValue({});
@@ -7,7 +8,7 @@ const logout = vi.fn().mockResolvedValue(undefined);
 const sendPasswordReset = vi.fn().mockResolvedValue(undefined);
 const changePassword = vi.fn().mockResolvedValue(undefined);
 
-export const useAuthentication: () => any = () => {
+export const useAuthentication: () => UseAuthentication = () => {
   return {
     isAuthenticated,
     login,
