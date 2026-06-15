@@ -1,3 +1,4 @@
+import { flushPromises } from '@vue/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { clearToken, getToken, setToken } from '@/core/auth/token-storage';
 
@@ -10,6 +11,21 @@ const mockUser = {
   email: 'test@example.com',
   role: 'admin' as const,
 };
+
+function getAuthHeader(init?: RequestInit): string | null {
+  const headers = init?.headers;
+  if (!headers) {
+    return null;
+  }
+  if (headers instanceof Headers) {
+    return headers.get('Authorization');
+  }
+  if (Array.isArray(headers)) {
+    const entry = headers.find(([key]) => key.toLowerCase() === 'authorization');
+    return entry?.[1] ?? null;
+  }
+  return (headers as Record<string, string>).Authorization ?? null;
+}
 
 function mockFetch(handler: (url: string, init?: RequestInit) => Response | Promise<Response>) {
   return vi.fn((input: RequestInfo | URL, init?: RequestInit) => {
@@ -44,7 +60,7 @@ describe('useAuthentication', () => {
         });
       }
       if (url.endsWith('/auth/me') && init?.method === 'GET') {
-        expect(init?.headers).toMatchObject({ Authorization: 'Bearer test-token' });
+        expect(getAuthHeader(init)).toBe('Bearer test-token');
         return new Response(JSON.stringify(mockUser), { status: 200 });
       }
       return new Response('Not found', { status: 404 });
@@ -102,7 +118,7 @@ describe('useAuthentication', () => {
     setToken('valid-token');
     const fetchMock = mockFetch((url, init) => {
       if (url.endsWith('/auth/me')) {
-        expect(init?.headers).toMatchObject({ Authorization: 'Bearer valid-token' });
+        expect(getAuthHeader(init)).toBe('Bearer valid-token');
         return new Response(JSON.stringify(mockUser), { status: 200 });
       }
       return new Response('Not found', { status: 404 });
@@ -167,8 +183,11 @@ describe('useAuthentication', () => {
   it('changePassword sends bearer token and body', async () => {
     setToken('change-password-token');
     const fetchMock = mockFetch((url, init) => {
+      if (url.endsWith('/auth/me')) {
+        return new Response(JSON.stringify(mockUser), { status: 200 });
+      }
       if (url.endsWith('/reset/update_password') && init?.method === 'POST') {
-        expect(init?.headers).toMatchObject({ Authorization: 'Bearer change-password-token' });
+        expect(getAuthHeader(init)).toBe('Bearer change-password-token');
         expect(init?.body).toBe(JSON.stringify({ password: 'new-pass', confirm_password: 'new-pass' }));
         return new Response(JSON.stringify({ message: 'Password updated' }), { status: 200 });
       }
@@ -197,7 +216,7 @@ describe('useAuthentication', () => {
     setToken('stored-token');
     const fetchMock = mockFetch((url, init) => {
       if (url.endsWith('/auth/me')) {
-        expect(init?.headers).toMatchObject({ Authorization: 'Bearer stored-token' });
+        expect(getAuthHeader(init)).toBe('Bearer stored-token');
         return new Response(JSON.stringify(mockUser), { status: 200 });
       }
       return new Response('Not found', { status: 404 });
@@ -205,10 +224,9 @@ describe('useAuthentication', () => {
     vi.stubGlobal('fetch', fetchMock);
 
     const auth = await loadAuthentication();
+    await flushPromises();
 
-    await vi.waitFor(() => {
-      expect(auth.user.value).toEqual(mockUser);
-    });
+    expect(auth.user.value).toEqual(mockUser);
 
     expect(fetchMock).toHaveBeenCalledWith(`${API_BASE}/auth/me`, expect.any(Object));
   });
