@@ -6,7 +6,7 @@ import { ref } from 'vue';
 const user = ref<User | null>(null);
 let sessionRestorePromise: Promise<boolean> | null = null;
 
-async function hydrateUserFromToken(token: string): Promise<boolean> {
+const hydrateUserFromToken = async (token: string): Promise<boolean> => {
   try {
     user.value = await getMe(token);
     return true;
@@ -18,9 +18,9 @@ async function hydrateUserFromToken(token: string): Promise<boolean> {
     }
     throw error;
   }
-}
+};
 
-async function restoreSessionIfNeeded(): Promise<boolean> {
+const restoreSessionIfNeeded = async (): Promise<boolean> => {
   if (user.value) {
     return true;
   }
@@ -37,9 +37,9 @@ async function restoreSessionIfNeeded(): Promise<boolean> {
   }
 
   return sessionRestorePromise;
-}
+};
 
-export function useAuthentication(): UseAuthentication {
+export const useAuthentication = (): UseAuthentication => {
   void restoreSessionIfNeeded();
 
   const isAuthenticated = async (): Promise<boolean> => {
@@ -85,4 +85,4 @@ export function useAuthentication(): UseAuthentication {
     sendPasswordReset,
     changePassword,
   };
-}
+};
