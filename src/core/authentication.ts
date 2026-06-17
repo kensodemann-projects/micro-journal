@@ -1,6 +1,7 @@
-import { HttpError, getMe, postLogin, requestResetLink, updatePassword } from '@/core/auth/auth-api';
+import { getMe, postLogin, requestResetLink, updatePassword } from '@/core/auth/auth-api';
 import { clearToken, getToken, setToken } from '@/core/auth/token-storage';
 import type { ChangePasswordPayload, LoginCredentials, UseAuthentication, User } from '@/core/auth/types';
+import { HttpError } from '@/core/http/fetch-api';
 import { ref } from 'vue';
 
 const user = ref<User | null>(null);
