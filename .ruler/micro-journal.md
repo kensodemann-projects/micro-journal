@@ -58,6 +58,7 @@ This project configures the Vuetify MCP server in `.ruler/ruler.toml`. Use it fo
 - **Tests**: Co-located in `__tests__/`, named `*.spec.ts`
 - **Comments**: Explain "why", not "what"
 - **Package manager**: Always use `pnpm`, never npm or yarn
+- **Functions**: Prefer arrow functions (`const fn = () => {}`) for callbacks, helpers, and composables. Use a standard `function` declaration only when required (e.g., generators, hoisting) or clearly advantageous (e.g., a named top-level export where a function name improves stack traces or recursion)
 
 ## Commands
 
