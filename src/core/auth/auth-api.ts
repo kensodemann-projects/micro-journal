@@ -9,38 +9,38 @@ const withBaseUrl = (path: string): string => {
   return `${baseUrl}${path}`;
 };
 
-export function postLogin(credentials: LoginCredentials): Promise<LoginResponse> {
+export const postLogin = (credentials: LoginCredentials): Promise<LoginResponse> => {
   return request<LoginResponse>(withBaseUrl('/auth/login'), {
     method: 'POST',
     body: JSON.stringify(credentials),
   });
-}
+};
 
-export function getMe(token: string): Promise<User> {
+export const getMe = (token: string): Promise<User> => {
   return request<User>(withBaseUrl('/auth/me'), {
     method: 'GET',
     token,
   });
-}
+};
 
-export function requestResetLink(email: string): Promise<MessageResponse> {
+export const requestResetLink = (email: string): Promise<MessageResponse> => {
   const params = new URLSearchParams({ email });
   return request<MessageResponse>(withBaseUrl(`/reset/request-reset-link?${params.toString()}`), {
     method: 'GET',
   });
-}
+};
 
-export function postMagicLinkLogin(payload: { magic_token: string; email: string }): Promise<LoginResponse> {
+export const postMagicLinkLogin = (payload: { magic_token: string; email: string }): Promise<LoginResponse> => {
   return request<LoginResponse>(withBaseUrl('/reset/magic-link-login'), {
     method: 'POST',
     body: JSON.stringify(payload),
   });
-}
+};
 
-export function updatePassword(token: string, payload: ChangePasswordPayload): Promise<MessageResponse> {
+export const updatePassword = (token: string, payload: ChangePasswordPayload): Promise<MessageResponse> => {
   return request<MessageResponse>(withBaseUrl('/reset/update_password'), {
     method: 'POST',
     token,
     body: JSON.stringify(payload),
   });
-}
+};
