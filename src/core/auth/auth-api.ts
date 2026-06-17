@@ -1,6 +1,6 @@
 import type { ChangePasswordPayload, LoginCredentials, LoginResponse, MessageResponse, User } from '@/core/auth/types';
 
-export class AuthError extends Error {
+export class HttpError extends Error {
   readonly status: number;
 
   constructor(status: number, message: string) {
@@ -46,7 +46,7 @@ async function request<T>(path: string, options: RequestInit & { token?: string 
 
   if (!response.ok) {
     const message = await parseErrorMessage(response);
-    throw new AuthError(response.status, message);
+    throw new HttpError(response.status, message);
   }
 
   if (response.status === 204) {

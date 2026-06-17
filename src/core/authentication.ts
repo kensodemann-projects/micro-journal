@@ -1,4 +1,4 @@
-import { AuthError, getMe, postLogin, requestResetLink, updatePassword } from '@/core/auth/auth-api';
+import { HttpError, getMe, postLogin, requestResetLink, updatePassword } from '@/core/auth/auth-api';
 import { clearToken, getToken, setToken } from '@/core/auth/token-storage';
 import type { ChangePasswordPayload, LoginCredentials, UseAuthentication, User } from '@/core/auth/types';
 import { ref } from 'vue';
@@ -11,7 +11,7 @@ const hydrateUserFromToken = async (token: string): Promise<boolean> => {
     user.value = await getMe(token);
     return true;
   } catch (error) {
-    if (error instanceof AuthError && error.status === 401) {
+    if (error instanceof HttpError && error.status === 401) {
       clearToken();
       user.value = null;
       return false;
@@ -71,7 +71,7 @@ export const useAuthentication = (): UseAuthentication => {
   const changePassword = async (payload: ChangePasswordPayload): Promise<void> => {
     const token = getToken();
     if (!token) {
-      throw new AuthError(401, 'Not authenticated');
+      throw new HttpError(401, 'Not authenticated');
     }
 
     await updatePassword(token, payload);
