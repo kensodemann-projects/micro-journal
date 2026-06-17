@@ -8,16 +8,16 @@ export class HttpError extends Error {
   }
 }
 
-export async function parseErrorMessage(response: Response): Promise<string> {
+export const parseErrorMessage = async (response: Response): Promise<string> => {
   try {
     const body = (await response.json()) as { message?: string; error?: string };
     return body.message ?? body.error ?? response.statusText;
   } catch {
     return response.statusText;
   }
-}
+};
 
-export async function request<T>(path: string, options: RequestInit & { token?: string | null } = {}): Promise<T> {
+export const request = async <T>(path: string, options: RequestInit & { token?: string | null } = {}): Promise<T> => {
   const { token, headers, ...rest } = options;
   const requestHeaders = new Headers(headers);
 
@@ -44,4 +44,4 @@ export async function request<T>(path: string, options: RequestInit & { token?: 
   }
 
   return (await response.json()) as T;
-}
+};
