@@ -3,7 +3,7 @@
     <LoginCard
       class="mt-[25%] mx-[5%] sm:mt-[20%] sm:mx-[10%] md:mt-[10%] md:mx-[20%] lg:mx-[25%] xl:mx-[30%]"
       :loading="loading"
-      @login="login"
+      @login="loginHandler"
       @resetPassword="resetPassword"
     />
     <v-alert
@@ -19,19 +19,27 @@
 
 <script lang="ts" setup>
 import LoginCard from '@/components/auth/LoginCard.vue';
+import { useAuthentication } from '@/core/authentication';
 import { ref } from 'vue';
 
+const { login } = useAuthentication();
 const loading = ref(false);
 const message = ref('');
 const messageType = ref<'error' | 'success'>('error');
 
-const login = () => {
+const loginHandler = async ({ email, password }: { email: string; password: string }) => {
   loading.value = true;
-  message.value = 'Login failed. Please try again.';
-  messageType.value = 'error';
-  setTimeout(() => {
+  try {
+    await login({
+      email,
+      password,
+    });
+  } catch {
+    message.value = 'Login failed. Please try again.';
+    messageType.value = 'error';
+  } finally {
     loading.value = false;
-  }, 1000);
+  }
 };
 
 const resetPassword = () => {

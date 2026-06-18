@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.app.json",
+  "include": ["src/pages/__tests__/login.spec.ts", "env.d.ts"],
+  "exclude": [],
+  "compilerOptions": {
+    "composite": false,
+    "types": ["vitest/globals", "node"]
+  }
+}
