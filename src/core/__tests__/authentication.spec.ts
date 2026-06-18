@@ -2,7 +2,7 @@ import { flushPromises } from '@vue/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { clearToken, getToken, setToken } from '@/core/auth/token-storage';
 
-const API_BASE = 'https://x8ki-letl-twmt.n7.xano.io/api:bQIgD9jv';
+const API_BASE = 'https://api.example.com';
 
 const mockUser = {
   id: 42,

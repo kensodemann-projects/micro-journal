@@ -1,6 +1,12 @@
 import { getMe, postLogin, requestResetLink, updatePassword } from '@/core/auth/auth-api';
 import { clearToken, getToken, setToken } from '@/core/auth/token-storage';
-import type { ChangePasswordPayload, LoginCredentials, UseAuthentication, User } from '@/core/auth/types';
+import type {
+  ChangePasswordPayload,
+  LoginCredentials,
+  LoginResponse,
+  UseAuthentication,
+  User,
+} from '@/core/auth/types';
 import { HttpError } from '@/core/http/fetch-api';
 import { ref } from 'vue';
 
@@ -53,11 +59,11 @@ export const useAuthentication = (): UseAuthentication => {
     return hydrateUserFromToken(token);
   };
 
-  const login = async (credentials: LoginCredentials): Promise<unknown> => {
+  const login = async (credentials: LoginCredentials): Promise<LoginResponse> => {
     const { authToken } = await postLogin(credentials);
     setToken(authToken);
     await hydrateUserFromToken(authToken);
-    return { authToken, user_id: user.value?.id };
+    return { authToken, user_id: user.value!.id };
   };
 
   const logout = async (): Promise<void> => {

@@ -17,7 +17,7 @@ export interface LoginCredentials {
 
 export interface LoginResponse {
   authToken: string;
-  user_id: string;
+  user_id: number;
 }
 
 export interface MessageResponse {
