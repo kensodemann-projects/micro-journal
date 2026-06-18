@@ -72,8 +72,15 @@ describe('useAuthentication', () => {
 
     expect(getToken()).toBe('test-token');
     expect(auth.user.value).toEqual(mockUser);
-    expect(fetchMock).toHaveBeenCalledWith(`${API_BASE}/auth/login`, expect.any(Object));
-    expect(fetchMock).toHaveBeenCalledWith(`${API_BASE}/auth/me`, expect.any(Object));
+    expect(fetchMock).toHaveBeenCalledWith(`${API_BASE}/auth/login`, {
+      method: 'POST',
+      body: JSON.stringify({ email: 'test@example.com', password: 'secret' }),
+      headers: expect.any(Object),
+    });
+    expect(fetchMock).toHaveBeenCalledWith(`${API_BASE}/auth/me`, {
+      method: 'GET',
+      headers: expect.any(Object),
+    });
   });
 
   it('login failure does not store token and leaves user null', async () => {
