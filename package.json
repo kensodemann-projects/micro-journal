@@ -33,7 +33,7 @@
     "@ionic/prettier-config": "^4.0.0",
     "@tailwindcss/vite": "^4.3.1",
     "@tsconfig/node22": "^22.0.5",
-    "@types/node": "^25.9.4",
+    "@types/node": "^26.0.1",
     "@vitejs/plugin-vue": "^6.0.7",
     "@vitest/coverage-v8": "^4.1.9",
     "@vue/eslint-config-typescript": "^14.9.0",
