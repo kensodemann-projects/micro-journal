@@ -6,7 +6,6 @@
   "scripts": {
     "build": "run-p type-check \"build-only {@}\" --",
     "build-only": "vite build",
-    "clean:localstorage": "rm -rf vite-storage*",
     "dev": "vite",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
@@ -14,9 +13,9 @@
     "mcp:revert": "ruler revert",
     "prepare": "husky",
     "preview": "vite preview",
-    "test": "bash -c 'vitest run ${@:2}; code=$?; run-p clean:localstorage; exit \"$code\"' bash",
-    "test:cov": "sh -c 'vitest run --coverage; code=$?; run-p clean:localstorage; exit \"$code\"'",
-    "test:dev": "sh -c 'vitest; code=$?; run-p clean:localstorage; exit \"$code\"'",
+    "test": "vitest run",
+    "test:cov": "vitest run --coverage",
+    "test:dev": "vitest",
     "type-check": "vue-tsc --build --force"
   },
   "dependencies": {
