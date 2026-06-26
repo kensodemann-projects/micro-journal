@@ -65,9 +65,6 @@ export default defineConfig({
       ],
     },
     clearMocks: true,
-    env: {
-      NODE_OPTIONS: '--localstorage-file=./vite-storage',
-    },
     globals: true,
     environment: 'jsdom',
     server: {
