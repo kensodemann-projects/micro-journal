@@ -20,9 +20,6 @@ pnpm-debug.log*
 firestore-debug.log*
 firebase-debug.log*
 
-# Test local storage files
-vite-storage*
-
 # Editor directories and files
 .idea
 .vscode
