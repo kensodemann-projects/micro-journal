@@ -21,8 +21,10 @@
 import LoginCard from '@/components/auth/LoginCard.vue';
 import { useAuthentication } from '@/core/authentication';
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 const { login } = useAuthentication();
+const router = useRouter();
 const loading = ref(false);
 const message = ref('');
 const messageType = ref<'error' | 'success'>('error');
@@ -34,6 +36,7 @@ const loginHandler = async ({ email, password }: { email: string; password: stri
       email,
       password,
     });
+    await router.replace('/');
   } catch {
     message.value = 'Login failed. Please try again.';
     messageType.value = 'error';

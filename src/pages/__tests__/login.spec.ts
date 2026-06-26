@@ -19,6 +19,7 @@ const mountPage = () => mount(LoginPage, { global: { plugins: [vuetify] } });
 
 describe('LoginPage', () => {
   let wrapper: ReturnType<typeof mountPage>;
+  let replace: Mock;
 
   afterEach(() => {
     wrapper?.unmount();
@@ -29,8 +30,9 @@ describe('LoginPage', () => {
   });
 
   beforeEach(() => {
+    replace = vi.fn();
     (useRouter as Mock).mockReturnValue({
-      replace: vi.fn(),
+      replace,
     });
   });
 
@@ -52,6 +54,39 @@ describe('LoginPage', () => {
       expect(login).toHaveBeenCalledExactlyOnceWith({
         email: 'test@example.com',
         password: 'password123',
+      });
+    });
+
+    describe('with valid credentials', () => {
+      beforeEach(() => {
+        const { login } = useAuthentication();
+        (login as Mock).mockResolvedValue({});
+      });
+
+      it('navigates to the root route', async () => {
+        wrapper = mountPage();
+        const loginCard = wrapper.findComponent({ name: 'LoginCard' });
+
+        await loginCard.vm.$emit('login', {
+          email: 'test@example.com',
+          password: 'password123',
+        });
+        await flushPromises();
+
+        expect(replace).toHaveBeenCalledExactlyOnceWith('/');
+      });
+
+      it('does not show an error message', async () => {
+        wrapper = mountPage();
+        const loginCard = wrapper.findComponent({ name: 'LoginCard' });
+
+        await loginCard.vm.$emit('login', {
+          email: 'test@example.com',
+          password: 'password123',
+        });
+        await flushPromises();
+
+        expect(wrapper.findComponent(components.VAlert).exists()).toBe(false);
       });
     });
 
