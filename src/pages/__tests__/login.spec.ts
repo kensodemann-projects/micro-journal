@@ -96,6 +96,19 @@ describe('LoginPage', () => {
         (login as Mock).mockRejectedValue(new HttpError(401, 'Invalid credentials'));
       });
 
+      it('does not navigate to the root route', async () => {
+        wrapper = mountPage();
+        const loginCard = wrapper.findComponent({ name: 'LoginCard' });
+
+        await loginCard.vm.$emit('login', {
+          email: 'test@example.com',
+          password: 'password123',
+        });
+        await flushPromises();
+
+        expect(replace).not.toHaveBeenCalled();
+      });
+
       it('shows error message on login failure', async () => {
         wrapper = mountPage();
         const loginCard = wrapper.findComponent({ name: 'LoginCard' });
