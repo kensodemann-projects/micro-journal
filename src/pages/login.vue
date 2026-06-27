@@ -8,7 +8,7 @@
     />
     <v-alert
       v-if="message"
-      :type="messageType"
+      type="error"
       class="mt-4 mx-[5%] sm:mx-[10%] md:mx-[20%] lg:mx-[25%] xl:mx-[30%]"
       @click="clearMessage"
     >
@@ -27,9 +27,9 @@ const { login } = useAuthentication();
 const router = useRouter();
 const loading = ref(false);
 const message = ref('');
-const messageType = ref<'error' | 'success'>('error');
 
 const loginHandler = async ({ email, password }: { email: string; password: string }) => {
+  message.value = '';
   loading.value = true;
   try {
     await login({
@@ -39,7 +39,6 @@ const loginHandler = async ({ email, password }: { email: string; password: stri
     await router.replace('/');
   } catch {
     message.value = 'Login failed. Please try again.';
-    messageType.value = 'error';
   } finally {
     loading.value = false;
   }
