@@ -93,7 +93,7 @@ describe('LoginPage', () => {
     describe('with invalid credentials', () => {
       beforeEach(() => {
         const { login } = useAuthentication();
-        (login as Mock).mockRejectedValue(new HttpError('Invalid credentials'));
+        (login as Mock).mockRejectedValue(new HttpError(401, 'Invalid credentials'));
       });
 
       it('shows error message on login failure', async () => {
