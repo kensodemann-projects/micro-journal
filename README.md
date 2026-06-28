@@ -1,82 +1,43 @@
-# micro-journal
+# Micro-Journal
 
-Scaffolded with Vuetify CLI.
+## Sysnopsis
 
-## ❗️ Documentation
+## Journal Entry List
 
-- Primary docs: https://vuetifyjs.com/
-- Getting started guide: https://vuetifyjs.com/en/getting-started/installation/
-- Community support: https://community.vuetifyjs.com/
-- Issue tracker: https://issues.vuetifyjs.com/
+The journal entry list is a simple list of journal entries sorted by the creation date with the latest being at the top.
 
-## 🧱 Stack
+### Journal Entry
 
-- Framework: Vue 3 + Vite
-- UI Library: Vuetify
-- Language: TypeScript
-- Package manager: pnpm
+All journal entries include a `user_id` and a `created_at` date. The rest of the information depends upon the type of entry being created. They all also contain a `type_id` that defines the type of entry being created.
 
-## 🧭 Start Here
+### Journal Entry Types
 
-- Main entry: `src/main.ts`
-- Main app component: `src/App.vue`
-- Main styles: `src/styles/`
-- Plugin setup: `src/plugins/`
+#### Journal
 
-## 📁 Project Structure
+This is the main type of entry. It consists of all of the things:
 
-- `src/main.ts` — application entry point
-- `src/App.vue` — root component
-- `src/components/` — reusable Vue components
-- `src/plugins/` — plugin registration and setup
-- `src/styles/` — global styles and theme settings
-- `public/` — static public files
+- Subject
+- Description (Long Text)
+- Mood
+- Category
 
-## ✨ Enabled Features
+The purpose of a Journal entry is to express your thoughts or feelings to get them down on paper.
 
-- ESLint
-- Vuetify MCP
-- File Router
-- Tailwind CSS
+#### Note
 
-## 💿 Install
+- Subject
+- Description (Long Text)
 
-Use your selected package manager (pnpm) to install dependencies:
+The purpose of a note is to note something for later or to note an observation. This is just for something you want to quickly jot down so you don't forget it. That is all.
 
-```bash
-pnpm install
-```
+#### Worry
 
-## 🚀 Quick Start
+- Subject
 
-```bash
-pnpm install
-pnpm dev
-```
+The purpose of a worry entry is to express an item you are worried about, and that is it. Get the worry out, express it, and let it sit. Do not analyze it, just express it.
 
-## 🏗️ Build
+#### Mood Check-in
 
-```bash
-pnpm build
-```
+A mood check-in is just that, a quick mood check-in without any more fanfair.
 
-## 🧪 Available Scripts
-
-- `pnpm dev`
-- `pnpm build`
-- `pnpm preview`
-- `pnpm build-only`
-- `pnpm type-check`
-- `pnpm lint`
-- `pnpm lint:fix`
-- `pnpm mcp`
-- `pnpm mcp:revert`
-
-## 💪 Support Vuetify Development
-
-This project uses Vuetify - an MIT licensed Open Source project. We are glad to welcome contributors and any support for ongoing development:
-
-- Contribute to Vuetify and ecosystem projects: https://github.com/vuetifyjs
-- Request enterprise support: https://support.vuetifyjs.com/
-- Sponsor on GitHub: https://github.com/sponsors/vuetifyjs
-- Support on Open Collective: https://opencollective.com/vuetify
+- Mood
