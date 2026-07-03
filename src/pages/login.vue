@@ -58,6 +58,5 @@ const clearMessage = () => {
 
 <route lang="yaml">
 meta:
-  layout: standalone
   allowAnonymous: true
 </route>
