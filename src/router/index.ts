@@ -2,9 +2,17 @@
  * router/index.ts
  *
  * Automatic routes for ./src/pages/*.vue
+ *
+ * @description: Automatically generated routes from ./src/pages/*.vue. New pages are automatically added to the router requiring authentication.
+ * New public routes that do not require authentication should set the `allowAnonymous` meta field within the `*.vue` file.
+ *
+ * @example:
+ * <route lang="yaml">
+ * meta:
+ *   allowAnonymous: true
+ * </route>
  */
 
-// Composables
 import { createRouter, createWebHistory, type RouteLocationNormalized } from 'vue-router';
 import { routes } from 'vue-router/auto-routes';
 import { useAuthentication } from '@/core/authentication';
