@@ -1,9 +1,8 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { useAuthentication } from '@/core/authentication';
+import { beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 import type { Router } from 'vue-router';
 
-const { isAuthenticated } = vi.hoisted(() => ({
-  isAuthenticated: vi.fn(),
-}));
+vi.mock('@/core/authentication');
 
 vi.mock('vue-router', async (importOriginal) => {
   const vueRouter = await importOriginal<typeof import('vue-router')>();
@@ -30,60 +29,54 @@ vi.mock('vue-router/auto-routes', () => ({
   ],
 }));
 
-vi.mock('@/core/authentication', () => ({
-  useAuthentication: () => ({ isAuthenticated }),
-}));
-
 const loadRouter = async (): Promise<Router> => {
-  vi.resetModules();
   return (await import('@/router/index')).default;
 };
 
 describe('router auth guard', () => {
   let router: Router;
 
-  afterEach(() => {
+  beforeEach(() => {
     vi.clearAllMocks();
-    vi.resetModules();
   });
 
   describe('unauthenticated user', () => {
+    const { isAuthenticated } = useAuthentication();
+
     beforeEach(async () => {
-      isAuthenticated.mockResolvedValue(false);
+      (isAuthenticated as Mock).mockResolvedValue(false);
       router = await loadRouter();
     });
 
     it('redirects from a protected route to /login', async () => {
       await router.push('/');
-
       expect(isAuthenticated).toHaveBeenCalledOnce();
       expect(router.currentRoute.value.path).toBe('/login');
     });
 
     it('allows navigation to /login', async () => {
       await router.push('/login');
-
       expect(isAuthenticated).not.toHaveBeenCalled();
       expect(router.currentRoute.value.path).toBe('/login');
     });
   });
 
   describe('authenticated user', () => {
+    const { isAuthenticated } = useAuthentication();
+
     beforeEach(async () => {
-      isAuthenticated.mockResolvedValue(true);
+      (isAuthenticated as Mock).mockResolvedValue(true);
       router = await loadRouter();
     });
 
     it('allows navigation to a protected route', async () => {
       await router.push('/');
-
       expect(isAuthenticated).toHaveBeenCalledOnce();
       expect(router.currentRoute.value.path).toBe('/');
     });
 
     it('allows navigation to /login', async () => {
       await router.push('/login');
-
       expect(isAuthenticated).not.toHaveBeenCalled();
       expect(router.currentRoute.value.path).toBe('/login');
     });
