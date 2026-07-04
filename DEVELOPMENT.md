@@ -28,7 +28,7 @@ Scaffolded with Vuetify CLI.
 - `src/main.ts` — application entry point
 - `src/App.vue` — root component
 - `src/components/` — reusable Vue components
-- `src/pages/` — application pagegs with automatically generated routes
+- `src/pages/` — application pages with automatically generated routes
 - `src/plugins/` — plugin registration and setup
 - `src/styles/` — global styles and theme settings
 - `public/` — static public files
