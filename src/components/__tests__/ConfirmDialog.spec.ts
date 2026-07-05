@@ -16,12 +16,12 @@ describe('Confirm Dialog', () => {
 
   const mountComponent = async (
     message: string,
-    options: { cancelLabel?: string; confirmLabel?: string; title?: string } = {},
+    options: { cancelLabel?: string; confirmLabel?: string; color?: string; title?: string } = {},
   ) => {
-    const { cancelLabel, confirmLabel, title } = options;
+    const { cancelLabel, confirmLabel, color, title } = options;
     const wrapper = mount(ConfirmDialog, {
       global: { plugins: [vuetify] },
-      props: { message, modelValue: true, cancelLabel, confirmLabel, title },
+      props: { message, modelValue: true, cancelLabel, confirmLabel, title, color },
       attachTo: document.body,
     });
     await flushPromises();
@@ -56,6 +56,14 @@ describe('Confirm Dialog', () => {
     });
   });
 
+  describe('icon', () => {
+    it('uses the specified color', async () => {
+      wrapper = await mountComponent('This is the question that I will ask?', { color: 'error' });
+      const icon = wrapper.findComponent(components.VIcon);
+      expect(icon.props('color')).toBe('error');
+    });
+  });
+
   describe('cancel button', () => {
     it('defaults to a label of "Cancel"', async () => {
       wrapper = await mountComponent('This is the question that I will ask?');
@@ -71,6 +79,14 @@ describe('Confirm Dialog', () => {
       wrapper = await mountComponent('This is the question that I will ask?');
       await findInDialog('cancel-button').trigger('click');
       expect(wrapper.emitted('cancel')).toBeTruthy();
+    });
+
+    it('always uses the secondary color', async () => {
+      wrapper = await mountComponent('This is the question that I will ask?', { color: 'error' });
+      const cancelButton = wrapper
+        .findAllComponents(components.VBtn)
+        .find((btn) => btn.attributes('data-testid') === 'cancel-button');
+      expect(cancelButton?.props('color')).toBe('secondary');
     });
   });
 
@@ -89,6 +105,14 @@ describe('Confirm Dialog', () => {
       wrapper = await mountComponent('This is the question that I will ask?');
       await findInDialog('confirm-button').trigger('click');
       expect(wrapper.emitted('confirm')).toBeTruthy();
+    });
+
+    it('uses the specified color', async () => {
+      wrapper = await mountComponent('This is the question that I will ask?', { color: 'error' });
+      const confirmButton = wrapper
+        .findAllComponents(components.VBtn)
+        .find((btn) => btn.attributes('data-testid') === 'confirm-button');
+      expect(confirmButton?.props('color')).toBe('error');
     });
   });
 });

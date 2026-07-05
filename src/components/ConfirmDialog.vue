@@ -4,14 +4,14 @@
       <v-card-title data-testid="title">{{ title || 'Are you sure?' }}</v-card-title>
       <v-card-text data-testid="body">
         <div class="d-flex ga-4 align-center">
-          <div><v-icon icon="mdi-help-rhombus" size="64" :color="iconColor || 'info'" /></div>
+          <div><v-icon icon="mdi-help-rhombus" size="64" :color="color || 'primary'" /></div>
           <div>
             {{ message }}
           </div>
         </div>
       </v-card-text>
       <v-card-actions>
-        <v-btn color="primary" @click="$emit('confirm')" data-testid="confirm-button">{{
+        <v-btn :color="color || 'primary'" @click="$emit('confirm')" data-testid="confirm-button">{{
           confirmLabel || 'Confirm'
         }}</v-btn>
         <v-btn color="secondary" @click="$emit('cancel')" data-testid="cancel-button">{{
@@ -24,6 +24,6 @@
 
 <script setup lang="ts">
 const showConfirmDialog = defineModel<boolean>({ required: true });
-defineProps<{ message: string; iconColor?: string; title?: string; cancelLabel?: string; confirmLabel?: string }>();
+defineProps<{ message: string; color?: string; title?: string; cancelLabel?: string; confirmLabel?: string }>();
 defineEmits(['confirm', 'cancel']);
 </script>
