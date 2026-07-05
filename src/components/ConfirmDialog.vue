@@ -11,8 +11,12 @@
         </div>
       </v-card-text>
       <v-card-actions>
-        <v-btn color="primary" @click="$emit('confirm')" data-testid="yes-button">Yes</v-btn>
-        <v-btn color="secondary" @click="$emit('cancel')" data-testid="no-button">No</v-btn>
+        <v-btn color="primary" @click="$emit('confirm')" data-testid="confirm-button">{{
+          confirmLabel || 'Confirm'
+        }}</v-btn>
+        <v-btn color="secondary" @click="$emit('cancel')" data-testid="cancel-button">{{
+          cancelLabel || 'Cancel'
+        }}</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -20,6 +24,6 @@
 
 <script setup lang="ts">
 const showConfirmDialog = defineModel<boolean>({ required: true });
-defineProps<{ message: string; iconColor?: string }>();
+defineProps<{ message: string; iconColor?: string; cancelLabel?: string; confirmLabel?: string }>();
 defineEmits(['confirm', 'cancel']);
 </script>

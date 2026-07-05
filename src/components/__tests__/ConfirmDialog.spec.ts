@@ -14,10 +14,14 @@ describe('Confirm Dialog', () => {
     return new DOMWrapper(element as Element);
   };
 
-  const mountComponent = async (message: string) => {
+  const mountComponent = async (
+    message: string,
+    options: { cancelLabel?: string; confirmLabel?: string; title?: string } = {},
+  ) => {
+    const { cancelLabel, confirmLabel, title } = options;
     const wrapper = mount(ConfirmDialog, {
       global: { plugins: [vuetify] },
-      props: { message, modelValue: true },
+      props: { message, modelValue: true, cancelLabel, confirmLabel, title },
       attachTo: document.body,
     });
     await flushPromises();
@@ -40,15 +44,39 @@ describe('Confirm Dialog', () => {
     expect(findInDialog('body').text()).toBe(message);
   });
 
-  it('emits cancel on no pressed', async () => {
-    wrapper = await mountComponent('This is the question that I will ask?');
-    await findInDialog('no-button').trigger('click');
-    expect(wrapper.emitted('cancel')).toBeTruthy();
+  describe('cancel button', () => {
+    it('defaults to a label of "Cancel"', async () => {
+      wrapper = await mountComponent('This is the question that I will ask?');
+      expect(findInDialog('cancel-button').text()).toBe('Cancel');
+    });
+
+    it('can be overridden with a custom label', async () => {
+      wrapper = await mountComponent('This is the question that I will ask?', { cancelLabel: 'No' });
+      expect(findInDialog('cancel-button').text()).toBe('No');
+    });
+
+    it('emits cancel on click', async () => {
+      wrapper = await mountComponent('This is the question that I will ask?');
+      await findInDialog('cancel-button').trigger('click');
+      expect(wrapper.emitted('cancel')).toBeTruthy();
+    });
   });
 
-  it('emits confirm on yes pressed', async () => {
-    wrapper = await mountComponent('This is the question that I will ask?');
-    await findInDialog('yes-button').trigger('click');
-    expect(wrapper.emitted('confirm')).toBeTruthy();
+  describe('confirm button', () => {
+    it('defaults to a label of "Confirm"', async () => {
+      wrapper = await mountComponent('This is the question that I will ask?');
+      expect(findInDialog('confirm-button').text()).toBe('Confirm');
+    });
+
+    it('can be overridden with a custom label', async () => {
+      wrapper = await mountComponent('This is the question that I will ask?', { confirmLabel: 'Yes' });
+      expect(findInDialog('confirm-button').text()).toBe('Yes');
+    });
+
+    it('emits confirm on click', async () => {
+      wrapper = await mountComponent('This is the question that I will ask?');
+      await findInDialog('confirm-button').trigger('click');
+      expect(wrapper.emitted('confirm')).toBeTruthy();
+    });
   });
 });
