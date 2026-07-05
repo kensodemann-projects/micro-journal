@@ -6,7 +6,7 @@
         <div class="d-flex ga-4 align-center">
           <div><v-icon icon="mdi-help-rhombus" size="64" :color="iconColor || 'info'" /></div>
           <div>
-            {{ question }}
+            {{ message }}
           </div>
         </div>
       </v-card-text>
@@ -20,6 +20,6 @@
 
 <script setup lang="ts">
 const showConfirmDialog = defineModel<boolean>({ required: true });
-defineProps<{ question: string; iconColor?: string }>();
+defineProps<{ message: string; iconColor?: string }>();
 defineEmits(['confirm', 'cancel']);
 </script>

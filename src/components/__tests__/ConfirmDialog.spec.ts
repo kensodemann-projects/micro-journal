@@ -14,10 +14,10 @@ describe('Confirm Dialog', () => {
     return new DOMWrapper(element as Element);
   };
 
-  const mountComponent = async (question: string) => {
+  const mountComponent = async (message: string) => {
     const wrapper = mount(ConfirmDialog, {
       global: { plugins: [vuetify] },
-      props: { question, modelValue: true },
+      props: { message, modelValue: true },
       attachTo: document.body,
     });
     await flushPromises();
@@ -34,10 +34,10 @@ describe('Confirm Dialog', () => {
     } catch {}
   });
 
-  it('displays the question', async () => {
-    const question = 'This is the question that I will ask?';
-    wrapper = await mountComponent(question);
-    expect(findInDialog('body').text()).toBe(question);
+  it('displays the message', async () => {
+    const message = 'This is the question that I will ask?';
+    wrapper = await mountComponent(message);
+    expect(findInDialog('body').text()).toBe(message);
   });
 
   it('emits cancel on no pressed', async () => {
