@@ -79,6 +79,7 @@ describe('Confirm Dialog', () => {
       wrapper = await mountComponent('This is the question that I will ask?');
       await findInDialog('cancel-button').trigger('click');
       expect(wrapper.emitted('cancel')).toBeTruthy();
+      expect(wrapper.emitted('confirm')).toBeFalsy();
     });
 
     it('closes the dialog when cancel is clicked', async () => {
@@ -112,6 +113,7 @@ describe('Confirm Dialog', () => {
       wrapper = await mountComponent('This is the question that I will ask?');
       await findInDialog('confirm-button').trigger('click');
       expect(wrapper.emitted('confirm')).toBeTruthy();
+      expect(wrapper.emitted('cancel')).toBeFalsy();
     });
 
     it('closes the dialog when confirm is clicked', async () => {
