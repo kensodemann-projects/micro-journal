@@ -3,8 +3,8 @@
     <v-card>
       <v-card-title data-testid="title">{{ title || 'Are you sure?' }}</v-card-title>
       <v-card-text data-testid="body">
-        <div class="d-flex ga-4 align-center">
-          <div><v-icon icon="mdi-help-rhombus" size="64" :color="color || 'primary'" /></div>
+        <div class="flex items-center gap-4">
+          <v-icon icon="mdi-help-rhombus" size="64" :color="color || 'primary'" />
           <div>
             {{ message }}
           </div>
