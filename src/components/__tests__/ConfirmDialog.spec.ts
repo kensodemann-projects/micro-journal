@@ -1,4 +1,4 @@
-import { flushPromises, mount, VueWrapper } from '@vue/test-utils';
+import { DOMWrapper, flushPromises, mount, VueWrapper } from '@vue/test-utils';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createVuetify } from 'vuetify';
 import * as components from 'vuetify/components';
@@ -7,9 +7,19 @@ import ConfirmDialog from '../ConfirmDialog.vue';
 
 describe('Confirm Dialog', () => {
   const vuetify = createVuetify({ components, directives });
+
+  const findInDialog = (testId: string) => {
+    const element = document.body.querySelector(`[data-testid="${testId}"]`);
+    expect(element).not.toBeNull();
+    return new DOMWrapper(element as Element);
+  };
+
   const mountComponent = async (question: string) => {
-    const wrapper = mount(ConfirmDialog, { global: { plugins: [vuetify] }, props: { question, modelValue: true } });
-    await wrapper.vm.$nextTick();
+    const wrapper = mount(ConfirmDialog, {
+      global: { plugins: [vuetify] },
+      props: { question, modelValue: true },
+      attachTo: document.body,
+    });
     await flushPromises();
     return wrapper;
   };
@@ -27,20 +37,18 @@ describe('Confirm Dialog', () => {
   it('displays the question', async () => {
     const question = 'This is the question that I will ask?';
     wrapper = await mountComponent(question);
-    expect(wrapper.find('[data-testid="body"]').text()).toBe(question);
+    expect(findInDialog('body').text()).toBe(question);
   });
 
   it('emits cancel on no pressed', async () => {
     wrapper = await mountComponent('This is the question that I will ask?');
-    const button = wrapper.find('[data-testid="no-button"]');
-    await button.trigger('click');
+    await findInDialog('no-button').trigger('click');
     expect(wrapper.emitted('cancel')).toBeTruthy();
   });
 
   it('emits confirm on yes pressed', async () => {
     wrapper = await mountComponent('This is the question that I will ask?');
-    const button = wrapper.find('[data-testid="yes-button"]');
-    await button.trigger('click');
+    await findInDialog('yes-button').trigger('click');
     expect(wrapper.emitted('confirm')).toBeTruthy();
   });
 });
