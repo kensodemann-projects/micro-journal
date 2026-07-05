@@ -11,10 +11,10 @@
         </div>
       </v-card-text>
       <v-card-actions>
-        <v-btn :color="color || 'primary'" @click="$emit('confirm')" data-testid="confirm-button">{{
+        <v-btn :color="color || 'primary'" @click="onClick('confirm')" data-testid="confirm-button">{{
           confirmLabel || 'Confirm'
         }}</v-btn>
-        <v-btn color="secondary" @click="$emit('cancel')" data-testid="cancel-button">{{
+        <v-btn color="secondary" @click="onClick('cancel')" data-testid="cancel-button">{{
           cancelLabel || 'Cancel'
         }}</v-btn>
       </v-card-actions>
@@ -25,5 +25,10 @@
 <script setup lang="ts">
 const showConfirmDialog = defineModel<boolean>({ required: true });
 defineProps<{ message: string; color?: string; title?: string; cancelLabel?: string; confirmLabel?: string }>();
-defineEmits(['confirm', 'cancel']);
+const emit = defineEmits(['confirm', 'cancel']);
+
+const onClick = (eventName: 'confirm' | 'cancel') => {
+  showConfirmDialog.value = false;
+  emit(eventName);
+};
 </script>

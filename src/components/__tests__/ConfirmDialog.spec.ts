@@ -64,6 +64,22 @@ describe('Confirm Dialog', () => {
     });
   });
 
+  describe('v-model', () => {
+    it('is set to false when cancel is clicked', async () => {
+      wrapper = await mountComponent('This is the question that I will ask?');
+      await findInDialog('cancel-button').trigger('click');
+      expect(wrapper.emitted('update:modelValue')).toBeTruthy();
+      expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([false]);
+    });
+
+    it('is set to false when confirm is clicked', async () => {
+      wrapper = await mountComponent('This is the question that I will ask?');
+      await findInDialog('confirm-button').trigger('click');
+      expect(wrapper.emitted('update:modelValue')).toBeTruthy();
+      expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([false]);
+    });
+  });
+
   describe('cancel button', () => {
     it('defaults to a label of "Cancel"', async () => {
       wrapper = await mountComponent('This is the question that I will ask?');
