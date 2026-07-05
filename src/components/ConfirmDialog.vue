@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="showConfirmDialog" max-width="600px" data-testid="confirm-dialog">
+  <v-dialog v-model="showConfirmDialog" max-width="600px" persistent data-testid="confirm-dialog">
     <v-card>
       <v-card-title data-testid="title">{{ title || 'Are you sure?' }}</v-card-title>
       <v-card-text data-testid="body">
