@@ -44,6 +44,18 @@ describe('Confirm Dialog', () => {
     expect(findInDialog('body').text()).toBe(message);
   });
 
+  describe('title', () => {
+    it('defaults to a title of "Are you sure?"', async () => {
+      wrapper = await mountComponent('This is the question that I will ask?');
+      expect(findInDialog('title').text()).toBe('Are you sure?');
+    });
+
+    it('can be overridden with a custom title', async () => {
+      wrapper = await mountComponent('This is the question that I will ask?', { title: 'Custom Title' });
+      expect(findInDialog('title').text()).toBe('Custom Title');
+    });
+  });
+
   describe('cancel button', () => {
     it('defaults to a label of "Cancel"', async () => {
       wrapper = await mountComponent('This is the question that I will ask?');
