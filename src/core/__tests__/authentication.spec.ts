@@ -1,219 +1,176 @@
-import { flushPromises } from '@vue/test-utils';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { getMe, postLogin, requestResetLink, updatePassword } from '@/core/auth/auth-api';
 import { clearToken, getToken, setToken } from '@/core/auth/token-storage';
-import { getAuthHeader, mockFetch } from '@/test-utils/mock-fetch';
+import type { LoginCredentials, User } from '@/core/auth/types';
+import { useAuthentication } from '@/core/authentication';
+import { HttpError } from '@/core/http/fetch-api';
+import { flushPromises } from '@vue/test-utils';
+import { beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 
-const API_BASE = 'https://api.example.com';
+vi.mock('@/core/auth/auth-api');
+vi.mock('@/core/auth/token-storage');
 
-const mockUser = {
+const mockUser: User = {
   id: 42,
   created_at: 1781274921674,
   name: 'Test User',
   email: 'test@example.com',
-  role: 'admin' as const,
+  role: 'admin',
 };
 
-async function loadAuthentication() {
-  vi.resetModules();
-  const { useAuthentication } = await import('@/core/authentication');
-  return useAuthentication();
-}
+const loginCredentials: LoginCredentials = { email: 'test@example.com', password: 'secret' };
+
+const initializeAuthentication = (loggedIn: boolean = false) => {
+  const { user } = useAuthentication();
+  user.value = loggedIn ? mockUser : null;
+  vi.clearAllMocks();
+};
 
 describe('useAuthentication', () => {
   beforeEach(() => {
-    vi.stubEnv('VITE_XANO_AUTH_API_URL', API_BASE);
-    clearToken();
+    (postLogin as Mock).mockResolvedValue({ authToken: 'test-token', user_id: mockUser.id });
+    (getMe as Mock).mockResolvedValue(mockUser);
   });
 
-  afterEach(() => {
-    clearToken();
-    vi.unstubAllGlobals();
-    vi.resetModules();
-  });
-
-  it('login success stores token and sets user from /auth/me', async () => {
-    const fetchMock = mockFetch((url, init) => {
-      if (url.endsWith('/auth/login') && init?.method === 'POST') {
-        return new Response(JSON.stringify({ authToken: 'test-token', user_id: '42' }), {
-          status: 200,
-        });
-      }
-      if (url.endsWith('/auth/me') && init?.method === 'GET') {
-        expect(getAuthHeader(init)).toBe('Bearer test-token');
-        return new Response(JSON.stringify(mockUser), { status: 200 });
-      }
-      return new Response('Not found', { status: 404 });
+  describe('login', () => {
+    beforeEach(() => {
+      initializeAuthentication(false);
     });
-    vi.stubGlobal('fetch', fetchMock);
 
-    const auth = await loadAuthentication();
-    await auth.login({ email: 'test@example.com', password: 'secret' });
+    it('stores token and hydrates user on success', async () => {
+      const { login, user } = useAuthentication();
 
-    expect(getToken()).toBe('test-token');
-    expect(auth.user.value).toEqual(mockUser);
-    expect(fetchMock).toHaveBeenCalledWith(`${API_BASE}/auth/login`, {
-      method: 'POST',
-      body: JSON.stringify({ email: 'test@example.com', password: 'secret' }),
-      headers: expect.any(Object),
+      const result = await login(loginCredentials);
+
+      expect(postLogin).toHaveBeenCalledExactlyOnceWith(loginCredentials);
+      expect(setToken).toHaveBeenCalledExactlyOnceWith('test-token');
+      expect(getMe).toHaveBeenCalledWith('test-token');
+      expect(user.value).toEqual(mockUser);
+      expect(result).toEqual({ authToken: 'test-token', user_id: mockUser.id });
     });
-    expect(fetchMock).toHaveBeenCalledWith(`${API_BASE}/auth/me`, {
-      method: 'GET',
-      headers: expect.any(Object),
+
+    it('does not store token or hydrate user on failure', async () => {
+      (postLogin as Mock).mockRejectedValue(new HttpError(401, 'Invalid credentials'));
+
+      const { login, user } = useAuthentication();
+
+      await expect(login({ email: 'test@example.com', password: 'wrong' })).rejects.toThrow('Invalid credentials');
+
+      expect(setToken).not.toHaveBeenCalled();
+      expect(getMe).not.toHaveBeenCalled();
+      expect(user.value).toBeNull();
     });
   });
 
-  it('login failure does not store token and leaves user null', async () => {
-    const fetchMock = mockFetch((url) => {
-      if (url.endsWith('/auth/login')) {
-        return new Response(JSON.stringify({ message: 'Invalid credentials' }), { status: 401 });
-      }
-      return new Response('Not found', { status: 404 });
+  describe('logout', () => {
+    beforeEach(() => {
+      initializeAuthentication(true);
     });
-    vi.stubGlobal('fetch', fetchMock);
 
-    const auth = await loadAuthentication();
+    it('clears token and user', async () => {
+      (getToken as Mock).mockReturnValue('existing-token');
+      const { isAuthenticated, user, logout } = useAuthentication();
+      await isAuthenticated();
 
-    await expect(auth.login({ email: 'test@example.com', password: 'wrong' })).rejects.toThrow('Invalid credentials');
+      expect(user.value).toEqual(mockUser);
 
-    expect(getToken()).toBeNull();
-    expect(auth.user.value).toBeNull();
-  });
+      await logout();
 
-  it('logout clears token and user', async () => {
-    setToken('existing-token');
-    const fetchMock = mockFetch((url) => {
-      if (url.endsWith('/auth/me')) {
-        return new Response(JSON.stringify(mockUser), { status: 200 });
-      }
-      return new Response('Not found', { status: 404 });
+      expect(clearToken).toHaveBeenCalled();
+      expect(user.value).toBeNull();
     });
-    vi.stubGlobal('fetch', fetchMock);
-
-    const auth = await loadAuthentication();
-    await auth.isAuthenticated();
-
-    expect(auth.user.value).toEqual(mockUser);
-
-    await auth.logout();
-
-    expect(getToken()).toBeNull();
-    expect(auth.user.value).toBeNull();
   });
 
-  it('isAuthenticated returns true and hydrates user with valid token', async () => {
-    setToken('valid-token');
-    const fetchMock = mockFetch((url, init) => {
-      if (url.endsWith('/auth/me')) {
-        expect(getAuthHeader(init)).toBe('Bearer valid-token');
-        return new Response(JSON.stringify(mockUser), { status: 200 });
-      }
-      return new Response('Not found', { status: 404 });
+  describe('isAuthenticated', () => {
+    beforeEach(() => {
+      initializeAuthentication(true);
     });
-    vi.stubGlobal('fetch', fetchMock);
 
-    const auth = await loadAuthentication();
-    const result = await auth.isAuthenticated();
+    it('returns true and hydrates user when a valid token is stored', async () => {
+      (getToken as Mock).mockReturnValue('valid-token');
 
-    expect(result).toBe(true);
-    expect(auth.user.value).toEqual(mockUser);
-  });
+      const { isAuthenticated, user } = useAuthentication();
 
-  it('isAuthenticated clears storage and returns false with expired token', async () => {
-    setToken('expired-token');
-    const fetchMock = mockFetch((url) => {
-      if (url.endsWith('/auth/me')) {
-        return new Response(JSON.stringify({ message: 'Unauthorized' }), { status: 401 });
-      }
-      return new Response('Not found', { status: 404 });
+      const result = await isAuthenticated();
+
+      expect(result).toBe(true);
+      expect(getMe).toHaveBeenCalledWith('valid-token');
+      expect(user.value).toEqual(mockUser);
     });
-    vi.stubGlobal('fetch', fetchMock);
 
-    const auth = await loadAuthentication();
-    const result = await auth.isAuthenticated();
+    it('clears storage and returns false when the token is expired', async () => {
+      (getToken as Mock).mockReturnValue('expired-token');
+      (getMe as Mock).mockRejectedValue(new HttpError(401, 'Unauthorized'));
 
-    expect(result).toBe(false);
-    expect(getToken()).toBeNull();
-    expect(auth.user.value).toBeNull();
-  });
+      const { isAuthenticated, user } = useAuthentication();
 
-  it('isAuthenticated returns false when no token is stored', async () => {
-    const fetchMock = mockFetch(() => new Response('Not found', { status: 404 }));
-    vi.stubGlobal('fetch', fetchMock);
+      const result = await isAuthenticated();
 
-    const auth = await loadAuthentication();
-    const result = await auth.isAuthenticated();
-
-    expect(result).toBe(false);
-    expect(fetchMock).not.toHaveBeenCalled();
-  });
-
-  it('sendPasswordReset calls GET with encoded email query param', async () => {
-    const fetchMock = mockFetch((url, init) => {
-      if (url === `${API_BASE}/reset/request-reset-link?email=test%40example.com`) {
-        expect(init?.method).toBe('GET');
-        return new Response(JSON.stringify({ message: 'Email sent' }), { status: 200 });
-      }
-      return new Response('Not found', { status: 404 });
+      expect(result).toBe(false);
+      expect(clearToken).toHaveBeenCalled();
+      expect(user.value).toBeNull();
     });
-    vi.stubGlobal('fetch', fetchMock);
 
-    const auth = await loadAuthentication();
-    await auth.sendPasswordReset({ email: 'test@example.com' });
+    it('returns false without calling getMe when no token is stored', async () => {
+      (getToken as Mock).mockReturnValue(null);
 
-    expect(fetchMock).toHaveBeenCalledWith(
-      `${API_BASE}/reset/request-reset-link?email=test%40example.com`,
-      expect.objectContaining({ method: 'GET' }),
-    );
-  });
+      const { isAuthenticated, user } = useAuthentication();
 
-  it('changePassword sends bearer token and body', async () => {
-    setToken('change-password-token');
-    const fetchMock = mockFetch((url, init) => {
-      if (url.endsWith('/auth/me')) {
-        return new Response(JSON.stringify(mockUser), { status: 200 });
-      }
-      if (url.endsWith('/reset/update_password') && init?.method === 'POST') {
-        expect(getAuthHeader(init)).toBe('Bearer change-password-token');
-        expect(init?.body).toBe(JSON.stringify({ password: 'new-pass', confirm_password: 'new-pass' }));
-        return new Response(JSON.stringify({ message: 'Password updated' }), { status: 200 });
-      }
-      return new Response('Not found', { status: 404 });
+      const result = await isAuthenticated();
+
+      expect(result).toBe(false);
+      expect(getMe).not.toHaveBeenCalled();
+      expect(user.value).toBeNull();
     });
-    vi.stubGlobal('fetch', fetchMock);
-
-    const auth = await loadAuthentication();
-    await auth.changePassword({ password: 'new-pass', confirm_password: 'new-pass' });
-
-    expect(fetchMock).toHaveBeenCalledWith(`${API_BASE}/reset/update_password`, expect.any(Object));
   });
 
-  it('changePassword throws when not authenticated', async () => {
-    const fetchMock = mockFetch(() => new Response('Not found', { status: 404 }));
-    vi.stubGlobal('fetch', fetchMock);
-
-    const auth = await loadAuthentication();
-
-    await expect(auth.changePassword({ password: 'new-pass', confirm_password: 'new-pass' })).rejects.toThrow(
-      'Not authenticated',
-    );
-  });
-
-  it('restores user on first useAuthentication call when token exists in storage', async () => {
-    setToken('stored-token');
-    const fetchMock = mockFetch((url, init) => {
-      if (url.endsWith('/auth/me')) {
-        expect(getAuthHeader(init)).toBe('Bearer stored-token');
-        return new Response(JSON.stringify(mockUser), { status: 200 });
-      }
-      return new Response('Not found', { status: 404 });
+  describe('sendPasswordReset', () => {
+    beforeEach(() => {
+      initializeAuthentication(false);
     });
-    vi.stubGlobal('fetch', fetchMock);
 
-    const auth = await loadAuthentication();
-    await flushPromises();
+    it('delegates to requestResetLink with the email', async () => {
+      const { sendPasswordReset } = useAuthentication();
+      await sendPasswordReset({ email: 'test@example.com' });
+      expect(requestResetLink).toHaveBeenCalledExactlyOnceWith('test@example.com');
+    });
+  });
 
-    expect(auth.user.value).toEqual(mockUser);
+  describe('changePassword', () => {
+    beforeEach(() => {
+      initializeAuthentication(true);
+    });
 
-    expect(fetchMock).toHaveBeenCalledWith(`${API_BASE}/auth/me`, expect.any(Object));
+    it('delegates to updatePassword with the stored token', async () => {
+      const payload = { password: 'new-pass', confirm_password: 'new-pass' };
+      (getToken as Mock).mockReturnValue('change-password-token');
+      const { changePassword } = useAuthentication();
+      await changePassword(payload);
+      expect(updatePassword).toHaveBeenCalledExactlyOnceWith('change-password-token', payload);
+    });
+
+    it('throws when not authenticated', async () => {
+      initializeAuthentication(false);
+      (getToken as Mock).mockReturnValue(null);
+      const { changePassword } = useAuthentication();
+      await expect(changePassword({ password: 'new-pass', confirm_password: 'new-pass' })).rejects.toThrow(
+        'Not authenticated',
+      );
+      expect(updatePassword).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('session restore', () => {
+    beforeEach(() => {
+      initializeAuthentication(false);
+    });
+
+    it('hydrates user on first useAuthentication call when a token exists in storage', async () => {
+      (getToken as Mock).mockReturnValue('stored-token');
+      const { user } = useAuthentication();
+      await flushPromises();
+
+      expect(getMe).toHaveBeenCalledWith('stored-token');
+      expect(user.value).toEqual(mockUser);
+    });
   });
 });
