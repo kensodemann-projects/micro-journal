@@ -1,6 +1,7 @@
 import { flushPromises } from '@vue/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { clearToken, getToken, setToken } from '@/core/auth/token-storage';
+import { getAuthHeader, mockFetch } from '@/test-utils/mock-fetch';
 
 const API_BASE = 'https://api.example.com';
 
@@ -11,28 +12,6 @@ const mockUser = {
   email: 'test@example.com',
   role: 'admin' as const,
 };
-
-function getAuthHeader(init?: RequestInit): string | null {
-  const headers = init?.headers;
-  if (!headers) {
-    return null;
-  }
-  if (headers instanceof Headers) {
-    return headers.get('Authorization');
-  }
-  if (Array.isArray(headers)) {
-    const entry = headers.find(([key]) => key.toLowerCase() === 'authorization');
-    return entry?.[1] ?? null;
-  }
-  return (headers as Record<string, string>).Authorization ?? null;
-}
-
-function mockFetch(handler: (url: string, init?: RequestInit) => Response | Promise<Response>) {
-  return vi.fn((input: RequestInfo | URL, init?: RequestInit) => {
-    const url = typeof input === 'string' ? input : input.toString();
-    return Promise.resolve(handler(url, init));
-  });
-}
 
 async function loadAuthentication() {
   vi.resetModules();
