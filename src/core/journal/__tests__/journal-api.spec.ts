@@ -53,5 +53,17 @@ describe('Journal API', () => {
       const result = await getCategories('valid-token');
       expect(result).toEqual(mockCategories);
     });
+
+    it('throws an error if the request fails', async () => {
+      vi.stubGlobal(
+        'fetch',
+        mockFetch(() => new Response(JSON.stringify({ message: 'Invalid credentials' }), { status: 401 })),
+      );
+
+      await expect(getCategories('valid-token')).rejects.toMatchObject({
+        status: 401,
+        message: 'Invalid credentials',
+      });
+    });
   });
 });
