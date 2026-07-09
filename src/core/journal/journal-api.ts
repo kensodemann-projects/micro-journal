@@ -1,5 +1,5 @@
 import { request } from '@/core/http/fetch-api';
-import type { Category } from './types';
+import type { Category, Mood } from './types';
 
 const withBaseUrl = (path: string): string => {
   const baseUrl = import.meta.env.VITE_XANO_JOURNAL_API_URL;
@@ -21,5 +21,12 @@ export const saveCategory = async (token: string, category: Partial<Category>): 
     method: 'POST',
     token,
     body: JSON.stringify(category),
+  });
+};
+
+export const getMoods = async (token: string): Promise<Mood[]> => {
+  return request<Mood[]>(withBaseUrl('/moods'), {
+    method: 'GET',
+    token,
   });
 };
