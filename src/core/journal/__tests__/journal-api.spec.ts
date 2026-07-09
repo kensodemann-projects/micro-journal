@@ -1,7 +1,7 @@
 import { getAuthHeader, mockFetch } from '@/test-utils/mock-fetch';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { Category } from '../types';
-import { getCategories } from '../journal-api';
+import { getCategories, saveCategory } from '../journal-api';
 
 const API_BASE = 'https://api.example.com';
 const mockCategories: Category[] = [
@@ -41,7 +41,7 @@ describe('Journal API', () => {
     vi.unstubAllGlobals();
   });
 
-  describe('Categories', () => {
+  describe('Get Categories', () => {
     it('gets the list of categories', async () => {
       const fetchMock = mockFetch((url, init) => {
         expect(url).toBe(`${API_BASE}/categories`);
@@ -61,6 +61,33 @@ describe('Journal API', () => {
       );
 
       await expect(getCategories('valid-token')).rejects.toMatchObject({
+        status: 401,
+        message: 'Invalid credentials',
+      });
+    });
+  });
+
+  describe('Save Category', () => {
+    it('saves a category', async () => {
+      const fetchMock = mockFetch((url, init) => {
+        expect(url).toBe(`${API_BASE}/categories`);
+        expect(init?.method).toBe('POST');
+        expect(getAuthHeader(init)).toBe('Bearer valid-token');
+        return new Response(JSON.stringify({ id: 314, name: 'New Category', created_at: 1693526400000 }), {
+          status: 200,
+        });
+      });
+      vi.stubGlobal('fetch', fetchMock);
+      const result = await saveCategory('valid-token', { name: 'New Category' });
+      expect(result).toEqual({ id: 314, name: 'New Category', created_at: 1693526400000 });
+    });
+
+    it('throws an error if the request fails', async () => {
+      vi.stubGlobal(
+        'fetch',
+        mockFetch(() => new Response(JSON.stringify({ message: 'Invalid credentials' }), { status: 401 })),
+      );
+      await expect(saveCategory('valid-token', { name: 'New Category' })).rejects.toMatchObject({
         status: 401,
         message: 'Invalid credentials',
       });
