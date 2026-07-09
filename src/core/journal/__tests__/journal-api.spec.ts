@@ -1,7 +1,7 @@
 import { getAuthHeader, mockFetch } from '@/test-utils/mock-fetch';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { Category } from '../types';
-import { getCategories, saveCategory } from '../journal-api';
+import { getCategories, saveCategory, withBaseUrl } from '../journal-api';
 
 const API_BASE = 'https://api.example.com';
 const mockCategories: Category[] = [
@@ -91,6 +91,28 @@ describe('Journal API', () => {
         status: 401,
         message: 'Invalid credentials',
       });
+    });
+  });
+
+  describe('withBaseUrl', () => {
+    it('throws when VITE_XANO_JOURNAL_API_URL is not configured', () => {
+      vi.stubEnv('VITE_XANO_JOURNAL_API_URL', '');
+
+      expect(() => withBaseUrl('/categories')).toThrow('VITE_XANO_JOURNAL_API_URL is not configured');
+    });
+
+    it('throws when VITE_XANO_JOURNAL_API_URL is not configured in getCategories', async () => {
+      vi.stubEnv('VITE_XANO_JOURNAL_API_URL', '');
+
+      await expect(getCategories('valid-token')).rejects.toThrow('VITE_XANO_JOURNAL_API_URL is not configured');
+    });
+
+    it('throws when VITE_XANO_JOURNAL_API_URL is not configured in saveCategory', async () => {
+      vi.stubEnv('VITE_XANO_JOURNAL_API_URL', '');
+
+      await expect(saveCategory('valid-token', { name: 'New Category' })).rejects.toThrow(
+        'VITE_XANO_JOURNAL_API_URL is not configured',
+      );
     });
   });
 });
