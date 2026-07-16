@@ -1,7 +1,7 @@
 import { getAuthHeader, mockFetch } from '@/test-utils/mock-fetch';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { getCategories, getMoods, saveCategory } from '../journal-api';
-import type { Category, Mood } from '../types';
+import { getCategories, getEntryType, getEntryTypes, getMood, getMoods, saveCategory } from '../journal-api';
+import type { Category, EntryType, Mood } from '../types';
 
 const API_BASE = 'https://api.example.com';
 const mockCategories: Category[] = [
@@ -28,6 +28,34 @@ const mockCategories: Category[] = [
   {
     id: 5,
     name: 'Quiet Moments',
+    created_at: 1725321600000, // 2024-09-03
+  },
+];
+
+const mockTypes: EntryType[] = [
+  {
+    id: 1,
+    name: 'Journal',
+    created_at: 1693526400000, // 2023-09-01
+  },
+  {
+    id: 2,
+    name: 'Note',
+    created_at: 1705276800000, // 2024-01-15
+  },
+  {
+    id: 3,
+    name: 'Worry',
+    created_at: 1711065600000, // 2024-03-22
+  },
+  {
+    id: 4,
+    name: 'Mood Check-in',
+    created_at: 1717977600000, // 2024-06-10
+  },
+  {
+    id: 5,
+    name: 'Gratitude',
     created_at: 1725321600000, // 2024-09-03
   },
 ];
@@ -163,5 +191,96 @@ describe('Journal API', () => {
 
       await expect(getMoods('valid-token')).rejects.toThrow('VITE_XANO_JOURNAL_API_URL is not configured');
     });
+  });
+  describe('Get Mood', () => {
+    it('gets a mood', async () => {
+      const fetchMock = mockFetch((url, init) => {
+        expect(url).toBe(`${API_BASE}/moods/1`);
+        expect(init?.method).toBe('GET');
+        expect(getAuthHeader(init)).toBe('Bearer valid-token');
+        return new Response(JSON.stringify(mockMoods[0]), { status: 200 });
+      });
+      vi.stubGlobal('fetch', fetchMock);
+      const result = await getMood('valid-token', '1');
+      expect(result).toEqual(mockMoods[0]);
+    });
+
+    it('throws an error if the request fails', async () => {
+      vi.stubGlobal(
+        'fetch',
+        mockFetch(() => new Response(JSON.stringify({ message: 'Invalid credentials' }), { status: 401 })),
+      );
+      await expect(getMood('valid-token', '1')).rejects.toMatchObject({
+        status: 401,
+        message: 'Invalid credentials',
+      });
+    });
+
+    it('throws when VITE_XANO_JOURNAL_API_URL is not configured in getMood', async () => {
+      vi.stubEnv('VITE_XANO_JOURNAL_API_URL', '');
+
+      await expect(getMood('valid-token', '1')).rejects.toThrow('VITE_XANO_JOURNAL_API_URL is not configured');
+    });
+  });
+  describe('Get Entry Types', () => {
+    it('gets the list of entry types', async () => {
+      const fetchMock = mockFetch((url, init) => {
+        expect(url).toBe(`${API_BASE}/types`);
+        expect(init?.method).toBe('GET');
+        expect(getAuthHeader(init)).toBe('Bearer valid-token');
+        return new Response(JSON.stringify(mockTypes), { status: 200 });
+      });
+      vi.stubGlobal('fetch', fetchMock);
+      const result = await getEntryTypes('valid-token');
+      expect(result).toEqual(mockTypes);
+    });
+
+    it('throws an error if the request fails', async () => {
+      vi.stubGlobal(
+        'fetch',
+        mockFetch(() => new Response(JSON.stringify({ message: 'Invalid credentials' }), { status: 401 })),
+      );
+      await expect(getEntryTypes('valid-token')).rejects.toMatchObject({
+        status: 401,
+        message: 'Invalid credentials',
+      });
+    });
+
+    it('throws when VITE_XANO_JOURNAL_API_URL is not configured in getEntryTypes', async () => {
+      vi.stubEnv('VITE_XANO_JOURNAL_API_URL', '');
+
+      await expect(getEntryTypes('valid-token')).rejects.toThrow('VITE_XANO_JOURNAL_API_URL is not configured');
+    });
+  });
+
+  describe('Get Entry Type', () => {
+    it('gets an entry type', async () => {
+      const fetchMock = mockFetch((url, init) => {
+        expect(url).toBe(`${API_BASE}/types/1`);
+        expect(init?.method).toBe('GET');
+        expect(getAuthHeader(init)).toBe('Bearer valid-token');
+        return new Response(JSON.stringify(mockTypes[0]), { status: 200 });
+      });
+      vi.stubGlobal('fetch', fetchMock);
+      const result = await getEntryType('valid-token', '1');
+      expect(result).toEqual(mockTypes[0]);
+    });
+
+    it('throws an error if the request fails', async () => {
+      vi.stubGlobal(
+        'fetch',
+        mockFetch(() => new Response(JSON.stringify({ message: 'Invalid credentials' }), { status: 401 })),
+      );
+      await expect(getEntryType('valid-token', '1')).rejects.toMatchObject({
+        status: 401,
+        message: 'Invalid credentials',
+      });
+    });
+  });
+
+  it('throws when VITE_XANO_JOURNAL_API_URL is not configured in getEntryType', async () => {
+    vi.stubEnv('VITE_XANO_JOURNAL_API_URL', '');
+
+    await expect(getEntryType('valid-token', '1')).rejects.toThrow('VITE_XANO_JOURNAL_API_URL is not configured');
   });
 });
