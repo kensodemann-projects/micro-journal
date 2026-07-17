@@ -17,8 +17,10 @@ export const getCategories = async (token: string): Promise<Category[]> => {
 };
 
 export const saveCategory = async (token: string, category: Partial<Category>): Promise<Category> => {
-  return request<Category>(withBaseUrl('/categories'), {
-    method: 'POST',
+  const method = category.id ? 'PATCH' : 'POST';
+  const url = category.id ? `/categories/${category.id}` : '/categories';
+  return request<Category>(withBaseUrl(url), {
+    method,
     token,
     body: JSON.stringify(category),
   });

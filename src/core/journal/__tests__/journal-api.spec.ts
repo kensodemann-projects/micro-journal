@@ -128,18 +128,36 @@ describe('Journal API', () => {
   });
 
   describe('Save Category', () => {
-    it('saves a category', async () => {
-      const fetchMock = mockFetch((url, init) => {
-        expect(url).toBe(`${API_BASE}/categories`);
-        expect(init?.method).toBe('POST');
-        expect(getAuthHeader(init)).toBe('Bearer valid-token');
-        return new Response(JSON.stringify({ id: 314, name: 'New Category', created_at: 1693526400000 }), {
-          status: 200,
+    describe('without an id', () => {
+      it('posts the new category', async () => {
+        const fetchMock = mockFetch((url, init) => {
+          expect(url).toBe(`${API_BASE}/categories`);
+          expect(init?.method).toBe('POST');
+          expect(getAuthHeader(init)).toBe('Bearer valid-token');
+          return new Response(JSON.stringify({ id: 314, name: 'New Category', created_at: 1693526400000 }), {
+            status: 200,
+          });
         });
+        vi.stubGlobal('fetch', fetchMock);
+        const result = await saveCategory('valid-token', { name: 'New Category' });
+        expect(result).toEqual({ id: 314, name: 'New Category', created_at: 1693526400000 });
       });
-      vi.stubGlobal('fetch', fetchMock);
-      const result = await saveCategory('valid-token', { name: 'New Category' });
-      expect(result).toEqual({ id: 314, name: 'New Category', created_at: 1693526400000 });
+    });
+
+    describe('with an id', () => {
+      it('patches the category', async () => {
+        const fetchMock = mockFetch((url, init) => {
+          expect(url).toBe(`${API_BASE}/categories/1`);
+          expect(init?.method).toBe('PATCH');
+          expect(getAuthHeader(init)).toBe('Bearer valid-token');
+          return new Response(JSON.stringify({ id: 1, name: 'Updated Category', created_at: 1693526400000 }), {
+            status: 200,
+          });
+        });
+        vi.stubGlobal('fetch', fetchMock);
+        const result = await saveCategory('valid-token', { id: 1, name: 'Updated Category' });
+        expect(result).toEqual({ id: 1, name: 'Updated Category', created_at: 1693526400000 });
+      });
     });
 
     it('throws an error if the request fails', async () => {
