@@ -111,12 +111,12 @@ describe('Journal API', () => {
     it('throws an error if the request fails', async () => {
       vi.stubGlobal(
         'fetch',
-        mockFetch(() => new Response(JSON.stringify({ message: 'Invalid credentials' }), { status: 401 })),
+        mockFetch(() => new Response(JSON.stringify({ message: 'Not Found.' }), { status: 404 })),
       );
 
       await expect(getCategories('valid-token')).rejects.toMatchObject({
-        status: 401,
-        message: 'Invalid credentials',
+        status: 404,
+        message: 'Not Found.',
       });
     });
 
@@ -163,11 +163,13 @@ describe('Journal API', () => {
     it('throws an error if the request fails', async () => {
       vi.stubGlobal(
         'fetch',
-        mockFetch(() => new Response(JSON.stringify({ message: 'Invalid credentials' }), { status: 401 })),
+        mockFetch(
+          () => new Response(JSON.stringify({ message: 'Unauthorized - Authentication Required' }), { status: 401 }),
+        ),
       );
       await expect(saveCategory('valid-token', { name: 'New Category' })).rejects.toMatchObject({
         status: 401,
-        message: 'Invalid credentials',
+        message: 'Unauthorized - Authentication Required',
       });
     });
 
@@ -196,11 +198,11 @@ describe('Journal API', () => {
     it('throws an error if the request fails', async () => {
       vi.stubGlobal(
         'fetch',
-        mockFetch(() => new Response(JSON.stringify({ message: 'Invalid credentials' }), { status: 401 })),
+        mockFetch(() => new Response(JSON.stringify({ message: 'Not Found.' }), { status: 404 })),
       );
       await expect(getMoods('valid-token')).rejects.toMatchObject({
-        status: 401,
-        message: 'Invalid credentials',
+        status: 404,
+        message: 'Not Found.',
       });
     });
 
@@ -226,11 +228,11 @@ describe('Journal API', () => {
     it('throws an error if the request fails', async () => {
       vi.stubGlobal(
         'fetch',
-        mockFetch(() => new Response(JSON.stringify({ message: 'Invalid credentials' }), { status: 401 })),
+        mockFetch(() => new Response(JSON.stringify({ message: 'Not Found.' }), { status: 404 })),
       );
       await expect(getMood('valid-token', '1')).rejects.toMatchObject({
-        status: 401,
-        message: 'Invalid credentials',
+        status: 404,
+        message: 'Not Found.',
       });
     });
 
@@ -256,11 +258,11 @@ describe('Journal API', () => {
     it('throws an error if the request fails', async () => {
       vi.stubGlobal(
         'fetch',
-        mockFetch(() => new Response(JSON.stringify({ message: 'Invalid credentials' }), { status: 401 })),
+        mockFetch(() => new Response(JSON.stringify({ message: 'Not Found.' }), { status: 404 })),
       );
       await expect(getEntryTypes('valid-token')).rejects.toMatchObject({
-        status: 401,
-        message: 'Invalid credentials',
+        status: 404,
+        message: 'Not Found.',
       });
     });
 
@@ -287,11 +289,11 @@ describe('Journal API', () => {
     it('throws an error if the request fails', async () => {
       vi.stubGlobal(
         'fetch',
-        mockFetch(() => new Response(JSON.stringify({ message: 'Invalid credentials' }), { status: 401 })),
+        mockFetch(() => new Response(JSON.stringify({ message: 'Not Found.' }), { status: 404 })),
       );
       await expect(getEntryType('valid-token', '1')).rejects.toMatchObject({
-        status: 401,
-        message: 'Invalid credentials',
+        status: 404,
+        message: 'Not Found.',
       });
     });
   });
