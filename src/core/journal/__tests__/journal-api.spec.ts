@@ -212,6 +212,7 @@ describe('Journal API', () => {
       await expect(getMoods('valid-token')).rejects.toThrow('VITE_XANO_JOURNAL_API_URL is not configured');
     });
   });
+
   describe('Get Mood', () => {
     it('gets a mood', async () => {
       const fetchMock = mockFetch((url, init) => {
@@ -242,6 +243,7 @@ describe('Journal API', () => {
       await expect(getMood('valid-token', '1')).rejects.toThrow('VITE_XANO_JOURNAL_API_URL is not configured');
     });
   });
+
   describe('Get Entry Types', () => {
     it('gets the list of entry types', async () => {
       const fetchMock = mockFetch((url, init) => {
