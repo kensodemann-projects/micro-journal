@@ -111,12 +111,12 @@ describe('Journal API', () => {
     it('throws an error if the request fails', async () => {
       vi.stubGlobal(
         'fetch',
-        mockFetch(() => new Response(JSON.stringify({ message: 'Not Found.' }), { status: 404 })),
+        mockFetch(() => new Response(JSON.stringify({ message: 'Unexpected error' }), { status: 500 })),
       );
 
       await expect(getCategories('valid-token')).rejects.toMatchObject({
-        status: 404,
-        message: 'Not Found.',
+        status: 500,
+        message: 'Unexpected error',
       });
     });
 
@@ -198,11 +198,11 @@ describe('Journal API', () => {
     it('throws an error if the request fails', async () => {
       vi.stubGlobal(
         'fetch',
-        mockFetch(() => new Response(JSON.stringify({ message: 'Not Found.' }), { status: 404 })),
+        mockFetch(() => new Response(JSON.stringify({ message: 'Unexpected error' }), { status: 500 })),
       );
       await expect(getMoods('valid-token')).rejects.toMatchObject({
-        status: 404,
-        message: 'Not Found.',
+        status: 500,
+        message: 'Unexpected error',
       });
     });
 
@@ -258,11 +258,11 @@ describe('Journal API', () => {
     it('throws an error if the request fails', async () => {
       vi.stubGlobal(
         'fetch',
-        mockFetch(() => new Response(JSON.stringify({ message: 'Not Found.' }), { status: 404 })),
+        mockFetch(() => new Response(JSON.stringify({ message: 'Unexpected error' }), { status: 500 })),
       );
       await expect(getEntryTypes('valid-token')).rejects.toMatchObject({
-        status: 404,
-        message: 'Not Found.',
+        status: 500,
+        message: 'Unexpected error',
       });
     });
 
