@@ -9,91 +9,10 @@ import {
   getMoods,
   saveCategory,
 } from '../journal-api';
-import type { Category, EntryType, Mood } from '../types';
+import { mockCategories, mockMoods, mockTypes } from './mock-data';
 
 const API_BASE = 'https://api.example.com';
-const mockCategories: Category[] = [
-  {
-    id: 1,
-    name: 'Daily Reflection',
-    created_at: 1693526400000, // 2023-09-01
-  },
-  {
-    id: 2,
-    name: 'Midnight Thoughts',
-    created_at: 1705276800000, // 2024-01-15
-  },
-  {
-    id: 3,
-    name: 'Wins & Milestones',
-    created_at: 1711065600000, // 2024-03-22
-  },
-  {
-    id: 4,
-    name: 'Creative Sparks',
-    created_at: 1717977600000, // 2024-06-10
-  },
-  {
-    id: 5,
-    name: 'Quiet Moments',
-    created_at: 1725321600000, // 2024-09-03
-  },
-];
 
-const mockTypes: EntryType[] = [
-  {
-    id: 1,
-    name: 'Journal',
-    created_at: 1693526400000, // 2023-09-01
-  },
-  {
-    id: 2,
-    name: 'Note',
-    created_at: 1705276800000, // 2024-01-15
-  },
-  {
-    id: 3,
-    name: 'Worry',
-    created_at: 1711065600000, // 2024-03-22
-  },
-  {
-    id: 4,
-    name: 'Mood Check-in',
-    created_at: 1717977600000, // 2024-06-10
-  },
-  {
-    id: 5,
-    name: 'Gratitude',
-    created_at: 1725321600000, // 2024-09-03
-  },
-];
-
-const mockMoods: Mood[] = [
-  {
-    id: 1,
-    name: 'Great',
-    rank: 1,
-    created_at: 1693526400000, // 2023-09-01
-  },
-  {
-    id: 2,
-    name: 'Okay',
-    rank: 2,
-    created_at: 1705276800000, // 2024-01-15
-  },
-  {
-    id: 3,
-    name: 'Low',
-    rank: 3,
-    created_at: 1711065600000, // 2024-03-22
-  },
-  {
-    id: 4,
-    name: 'Energized',
-    rank: 1,
-    created_at: 1717977600000, // 2024-06-10
-  },
-];
 describe('Journal API', () => {
   beforeEach(() => {
     vi.stubEnv('VITE_XANO_JOURNAL_API_URL', API_BASE);
