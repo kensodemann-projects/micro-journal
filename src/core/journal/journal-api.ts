@@ -84,3 +84,10 @@ export const saveEntry = async (token: string, entry: Partial<Entry>): Promise<E
     body: JSON.stringify(entry),
   });
 };
+
+export const removeEntry = async (token: string, entryId: string): Promise<void> => {
+  return request<void>(withBaseUrl(`/entries/${entryId}`), {
+    method: 'DELETE',
+    token,
+  });
+};

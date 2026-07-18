@@ -9,6 +9,7 @@ import {
   getEntries,
   getMood,
   getMoods,
+  removeEntry,
   saveCategory,
   saveEntry,
 } from '../journal-api';
@@ -401,5 +402,36 @@ describe('Journal API', () => {
         mood_id: mockMoods[0].id,
       }),
     ).rejects.toThrow('VITE_XANO_JOURNAL_API_URL is not configured');
+  });
+
+  describe('Remove Entry', () => {
+    it('removes an entry', async () => {
+      const fetchMock = mockFetch((url, init) => {
+        expect(url).toBe(`${API_BASE}/entries/1`);
+        expect(init?.method).toBe('DELETE');
+        expect(getAuthHeader(init)).toBe('Bearer valid-token');
+        return new Response(JSON.stringify({ message: 'Entry removed successfully' }), { status: 200 });
+      });
+      vi.stubGlobal('fetch', fetchMock);
+      const result = await removeEntry('valid-token', '1');
+      expect(result).toEqual({ message: 'Entry removed successfully' });
+    });
+
+    it('throws an error if the request fails', async () => {
+      vi.stubGlobal(
+        'fetch',
+        mockFetch(() => new Response(JSON.stringify({ message: 'Not Found.' }), { status: 404 })),
+      );
+      await expect(removeEntry('valid-token', '1')).rejects.toMatchObject({
+        status: 404,
+        message: 'Not Found.',
+      });
+    });
+
+    it('throws when VITE_XANO_JOURNAL_API_URL is not configured in removeEntry', async () => {
+      vi.stubEnv('VITE_XANO_JOURNAL_API_URL', '');
+
+      await expect(removeEntry('valid-token', '1')).rejects.toThrow('VITE_XANO_JOURNAL_API_URL is not configured');
+    });
   });
 });
