@@ -1,5 +1,5 @@
 import { request } from '@/core/http/fetch-api';
-import type { Category, EntryType, Mood } from './types';
+import type { Category, Entry, EntryType, Mood } from './types';
 
 const withBaseUrl = (path: string): string => {
   const baseUrl = import.meta.env.VITE_XANO_JOURNAL_API_URL;
@@ -56,6 +56,20 @@ export const getEntryTypes = async (token: string): Promise<EntryType[]> => {
 
 export const getEntryType = async (token: string, entryTypeId: string): Promise<EntryType> => {
   return request<EntryType>(withBaseUrl(`/types/${entryTypeId}`), {
+    method: 'GET',
+    token,
+  });
+};
+
+export const getEntries = async (token: string): Promise<Entry[]> => {
+  return request<Entry[]>(withBaseUrl('/journal'), {
+    method: 'GET',
+    token,
+  });
+};
+
+export const getEntry = async (token: string, entryId: string): Promise<Entry> => {
+  return request<Entry>(withBaseUrl(`/journal/${entryId}`), {
     method: 'GET',
     token,
   });
