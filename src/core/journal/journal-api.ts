@@ -74,3 +74,13 @@ export const getEntry = async (token: string, entryId: string): Promise<Entry> =
     token,
   });
 };
+
+export const saveEntry = async (token: string, entry: Partial<Entry>): Promise<Entry> => {
+  const method = entry.id ? 'PATCH' : 'POST';
+  const url = entry.id ? `/journal/${entry.id}` : '/journal';
+  return request<Entry>(withBaseUrl(url), {
+    method,
+    token,
+    body: JSON.stringify(entry),
+  });
+};
