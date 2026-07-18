@@ -62,14 +62,14 @@ export const getEntryType = async (token: string, entryTypeId: string): Promise<
 };
 
 export const getEntries = async (token: string): Promise<Entry[]> => {
-  return request<Entry[]>(withBaseUrl('/journal'), {
+  return request<Entry[]>(withBaseUrl('/entries'), {
     method: 'GET',
     token,
   });
 };
 
 export const getEntry = async (token: string, entryId: string): Promise<Entry> => {
-  return request<Entry>(withBaseUrl(`/journal/${entryId}`), {
+  return request<Entry>(withBaseUrl(`/entries/${entryId}`), {
     method: 'GET',
     token,
   });
@@ -77,7 +77,7 @@ export const getEntry = async (token: string, entryId: string): Promise<Entry> =
 
 export const saveEntry = async (token: string, entry: Partial<Entry>): Promise<Entry> => {
   const method = entry.id ? 'PATCH' : 'POST';
-  const url = entry.id ? `/journal/${entry.id}` : '/journal';
+  const url = entry.id ? `/entries/${entry.id}` : '/entries';
   return request<Entry>(withBaseUrl(url), {
     method,
     token,

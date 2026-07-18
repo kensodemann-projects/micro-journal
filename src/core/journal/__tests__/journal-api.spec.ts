@@ -270,7 +270,7 @@ describe('Journal API', () => {
   describe('Get Entries', () => {
     it('gets the list of entries', async () => {
       const fetchMock = mockFetch((url, init) => {
-        expect(url).toBe(`${API_BASE}/journal`);
+        expect(url).toBe(`${API_BASE}/entries`);
         expect(init?.method).toBe('GET');
         expect(getAuthHeader(init)).toBe('Bearer valid-token');
         return new Response(JSON.stringify(mockEntries), { status: 200 });
@@ -301,7 +301,7 @@ describe('Journal API', () => {
   describe('Get Entry', () => {
     it('gets an entry', async () => {
       const fetchMock = mockFetch((url, init) => {
-        expect(url).toBe(`${API_BASE}/journal/1`);
+        expect(url).toBe(`${API_BASE}/entries/1`);
         expect(init?.method).toBe('GET');
         expect(getAuthHeader(init)).toBe('Bearer valid-token');
         return new Response(JSON.stringify(mockEntries[0]), { status: 200 });
@@ -333,7 +333,7 @@ describe('Journal API', () => {
     describe('without an id', () => {
       it('posts the new entry', async () => {
         const fetchMock = mockFetch((url, init) => {
-          expect(url).toBe(`${API_BASE}/journal`);
+          expect(url).toBe(`${API_BASE}/entries`);
           expect(init?.method).toBe('POST');
           expect(getAuthHeader(init)).toBe('Bearer valid-token');
           return new Response(JSON.stringify(mockEntries[0]), { status: 200 });
@@ -353,7 +353,7 @@ describe('Journal API', () => {
     describe('with an id', () => {
       it('patches the entry', async () => {
         const fetchMock = mockFetch((url, init) => {
-          expect(url).toBe(`${API_BASE}/journal/1`);
+          expect(url).toBe(`${API_BASE}/entries/1`);
           expect(init?.method).toBe('PATCH');
           expect(getAuthHeader(init)).toBe('Bearer valid-token');
           return new Response(JSON.stringify({ ...mockEntries[0], description: 'Updated Entry Description' }), {
