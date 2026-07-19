@@ -260,12 +260,12 @@ describe('Journal API', () => {
         message: 'Not Found.',
       });
     });
-  });
 
-  it('throws when VITE_XANO_JOURNAL_API_URL is not configured in getEntryType', async () => {
-    vi.stubEnv('VITE_XANO_JOURNAL_API_URL', '');
+    it('throws when VITE_XANO_JOURNAL_API_URL is not configured in getEntryType', async () => {
+      vi.stubEnv('VITE_XANO_JOURNAL_API_URL', '');
 
-    await expect(getEntryType('valid-token', '1')).rejects.toThrow('VITE_XANO_JOURNAL_API_URL is not configured');
+      await expect(getEntryType('valid-token', '1')).rejects.toThrow('VITE_XANO_JOURNAL_API_URL is not configured');
+    });
   });
 
   describe('Get Entries', () => {
@@ -369,39 +369,39 @@ describe('Journal API', () => {
         expect(result).toEqual({ ...mockEntries[0], description: 'Updated Entry Description' });
       });
     });
-  });
 
-  it('throws an error if the request fails', async () => {
-    vi.stubGlobal(
-      'fetch',
-      mockFetch(() => new Response(JSON.stringify({ message: 'Unexpected error' }), { status: 500 })),
-    );
-    await expect(
-      saveEntry('valid-token', {
-        subject: 'New Entry',
-        description: 'New Entry Description',
-        category_id: mockCategories[0].id,
-        type_id: mockTypes[0].id,
-        mood_id: mockMoods[0].id,
-      }),
-    ).rejects.toMatchObject({
-      status: 500,
-      message: 'Unexpected error',
+    it('throws an error if the request fails', async () => {
+      vi.stubGlobal(
+        'fetch',
+        mockFetch(() => new Response(JSON.stringify({ message: 'Unexpected error' }), { status: 500 })),
+      );
+      await expect(
+        saveEntry('valid-token', {
+          subject: 'New Entry',
+          description: 'New Entry Description',
+          category_id: mockCategories[0].id,
+          type_id: mockTypes[0].id,
+          mood_id: mockMoods[0].id,
+        }),
+      ).rejects.toMatchObject({
+        status: 500,
+        message: 'Unexpected error',
+      });
     });
-  });
 
-  it('throws when VITE_XANO_JOURNAL_API_URL is not configured in saveEntry', async () => {
-    vi.stubEnv('VITE_XANO_JOURNAL_API_URL', '');
+    it('throws when VITE_XANO_JOURNAL_API_URL is not configured in saveEntry', async () => {
+      vi.stubEnv('VITE_XANO_JOURNAL_API_URL', '');
 
-    await expect(
-      saveEntry('valid-token', {
-        subject: 'New Entry',
-        description: 'New Entry Description',
-        category_id: mockCategories[0].id,
-        type_id: mockTypes[0].id,
-        mood_id: mockMoods[0].id,
-      }),
-    ).rejects.toThrow('VITE_XANO_JOURNAL_API_URL is not configured');
+      await expect(
+        saveEntry('valid-token', {
+          subject: 'New Entry',
+          description: 'New Entry Description',
+          category_id: mockCategories[0].id,
+          type_id: mockTypes[0].id,
+          mood_id: mockMoods[0].id,
+        }),
+      ).rejects.toThrow('VITE_XANO_JOURNAL_API_URL is not configured');
+    });
   });
 
   describe('Remove Entry', () => {
