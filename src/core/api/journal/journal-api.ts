@@ -9,17 +9,15 @@ const withBaseUrl = (path: string): string => {
   return `${baseUrl}${path}`;
 };
 
-export const getCategories = async (token: string): Promise<Category[]> => {
+export const getCategories = async (): Promise<Category[]> => {
   return request<Category[]>(withBaseUrl('/categories'), {
     method: 'GET',
-    token,
   });
 };
 
-export const getCategory = async (token: string, categoryId: string): Promise<Category> => {
+export const getCategory = async (categoryId: string): Promise<Category> => {
   return request<Category>(withBaseUrl(`/categories/${categoryId}`), {
     method: 'GET',
-    token,
   });
 };
 
@@ -32,31 +30,27 @@ export const saveCategory = async (
   return request<Category>(withBaseUrl(url), { method, token, body: JSON.stringify(category) });
 };
 
-export const getMoods = async (token: string): Promise<Mood[]> => {
+export const getMoods = async (): Promise<Mood[]> => {
   return request<Mood[]>(withBaseUrl('/moods'), {
     method: 'GET',
-    token,
   });
 };
 
-export const getMood = async (token: string, moodId: string): Promise<Mood> => {
+export const getMood = async (moodId: string): Promise<Mood> => {
   return request<Mood>(withBaseUrl(`/moods/${moodId}`), {
     method: 'GET',
-    token,
   });
 };
 
-export const getEntryTypes = async (token: string): Promise<EntryType[]> => {
+export const getEntryTypes = async (): Promise<EntryType[]> => {
   return request<EntryType[]>(withBaseUrl('/types'), {
     method: 'GET',
-    token,
   });
 };
 
-export const getEntryType = async (token: string, entryTypeId: string): Promise<EntryType> => {
+export const getEntryType = async (entryTypeId: string): Promise<EntryType> => {
   return request<EntryType>(withBaseUrl(`/types/${entryTypeId}`), {
     method: 'GET',
-    token,
   });
 };
 

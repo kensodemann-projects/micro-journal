@@ -31,11 +31,11 @@ describe('Journal API', () => {
       const fetchMock = mockFetch((url, init) => {
         expect(url).toBe(`${API_BASE}/categories`);
         expect(init?.method).toBe('GET');
-        expect(getAuthHeader(init)).toBe('Bearer valid-token');
+        expect(getAuthHeader(init)).toBeNull();
         return new Response(JSON.stringify(mockCategories), { status: 200 });
       });
       vi.stubGlobal('fetch', fetchMock);
-      const result = await getCategories('valid-token');
+      const result = await getCategories();
       expect(result).toEqual(mockCategories);
     });
 
@@ -45,7 +45,7 @@ describe('Journal API', () => {
         mockFetch(() => new Response(JSON.stringify({ message: 'Unexpected error' }), { status: 500 })),
       );
 
-      await expect(getCategories('valid-token')).rejects.toMatchObject({
+      await expect(getCategories()).rejects.toMatchObject({
         status: 500,
         message: 'Unexpected error',
       });
@@ -54,7 +54,7 @@ describe('Journal API', () => {
     it('throws when VITE_XANO_JOURNAL_API_URL is not configured in getCategories', async () => {
       vi.stubEnv('VITE_XANO_JOURNAL_API_URL', '');
 
-      await expect(getCategories('valid-token')).rejects.toThrow('VITE_XANO_JOURNAL_API_URL is not configured');
+      await expect(getCategories()).rejects.toThrow('VITE_XANO_JOURNAL_API_URL is not configured');
     });
   });
 
@@ -63,11 +63,11 @@ describe('Journal API', () => {
       const fetchMock = mockFetch((url, init) => {
         expect(url).toBe(`${API_BASE}/categories/1`);
         expect(init?.method).toBe('GET');
-        expect(getAuthHeader(init)).toBe('Bearer valid-token');
+        expect(getAuthHeader(init)).toBeNull();
         return new Response(JSON.stringify(mockCategories[0]), { status: 200 });
       });
       vi.stubGlobal('fetch', fetchMock);
-      const result = await getCategory('valid-token', '1');
+      const result = await getCategory('1');
       expect(result).toEqual(mockCategories[0]);
     });
 
@@ -76,7 +76,7 @@ describe('Journal API', () => {
         'fetch',
         mockFetch(() => new Response(JSON.stringify({ message: 'Unexpected error' }), { status: 500 })),
       );
-      await expect(getCategory('valid-token', '1')).rejects.toMatchObject({
+      await expect(getCategory('1')).rejects.toMatchObject({
         status: 500,
         message: 'Unexpected error',
       });
@@ -85,7 +85,7 @@ describe('Journal API', () => {
     it('throws when VITE_XANO_JOURNAL_API_URL is not configured in getCategory', async () => {
       vi.stubEnv('VITE_XANO_JOURNAL_API_URL', '');
 
-      await expect(getCategory('valid-token', '1')).rejects.toThrow('VITE_XANO_JOURNAL_API_URL is not configured');
+      await expect(getCategory('1')).rejects.toThrow('VITE_XANO_JOURNAL_API_URL is not configured');
     });
   });
 
@@ -149,11 +149,11 @@ describe('Journal API', () => {
       const fetchMock = mockFetch((url, init) => {
         expect(url).toBe(`${API_BASE}/moods`);
         expect(init?.method).toBe('GET');
-        expect(getAuthHeader(init)).toBe('Bearer valid-token');
+        expect(getAuthHeader(init)).toBeNull();
         return new Response(JSON.stringify(mockMoods), { status: 200 });
       });
       vi.stubGlobal('fetch', fetchMock);
-      const result = await getMoods('valid-token');
+      const result = await getMoods();
       expect(result).toEqual(mockMoods);
     });
 
@@ -162,7 +162,7 @@ describe('Journal API', () => {
         'fetch',
         mockFetch(() => new Response(JSON.stringify({ message: 'Unexpected error' }), { status: 500 })),
       );
-      await expect(getMoods('valid-token')).rejects.toMatchObject({
+      await expect(getMoods()).rejects.toMatchObject({
         status: 500,
         message: 'Unexpected error',
       });
@@ -171,7 +171,7 @@ describe('Journal API', () => {
     it('throws when VITE_XANO_JOURNAL_API_URL is not configured in getMoods', async () => {
       vi.stubEnv('VITE_XANO_JOURNAL_API_URL', '');
 
-      await expect(getMoods('valid-token')).rejects.toThrow('VITE_XANO_JOURNAL_API_URL is not configured');
+      await expect(getMoods()).rejects.toThrow('VITE_XANO_JOURNAL_API_URL is not configured');
     });
   });
 
@@ -180,11 +180,11 @@ describe('Journal API', () => {
       const fetchMock = mockFetch((url, init) => {
         expect(url).toBe(`${API_BASE}/moods/1`);
         expect(init?.method).toBe('GET');
-        expect(getAuthHeader(init)).toBe('Bearer valid-token');
+        expect(getAuthHeader(init)).toBeNull();
         return new Response(JSON.stringify(mockMoods[0]), { status: 200 });
       });
       vi.stubGlobal('fetch', fetchMock);
-      const result = await getMood('valid-token', '1');
+      const result = await getMood('1');
       expect(result).toEqual(mockMoods[0]);
     });
 
@@ -193,7 +193,7 @@ describe('Journal API', () => {
         'fetch',
         mockFetch(() => new Response(JSON.stringify({ message: 'Not Found.' }), { status: 404 })),
       );
-      await expect(getMood('valid-token', '1')).rejects.toMatchObject({
+      await expect(getMood('1')).rejects.toMatchObject({
         status: 404,
         message: 'Not Found.',
       });
@@ -202,7 +202,7 @@ describe('Journal API', () => {
     it('throws when VITE_XANO_JOURNAL_API_URL is not configured in getMood', async () => {
       vi.stubEnv('VITE_XANO_JOURNAL_API_URL', '');
 
-      await expect(getMood('valid-token', '1')).rejects.toThrow('VITE_XANO_JOURNAL_API_URL is not configured');
+      await expect(getMood('1')).rejects.toThrow('VITE_XANO_JOURNAL_API_URL is not configured');
     });
   });
 
@@ -211,11 +211,11 @@ describe('Journal API', () => {
       const fetchMock = mockFetch((url, init) => {
         expect(url).toBe(`${API_BASE}/types`);
         expect(init?.method).toBe('GET');
-        expect(getAuthHeader(init)).toBe('Bearer valid-token');
+        expect(getAuthHeader(init)).toBeNull();
         return new Response(JSON.stringify(mockTypes), { status: 200 });
       });
       vi.stubGlobal('fetch', fetchMock);
-      const result = await getEntryTypes('valid-token');
+      const result = await getEntryTypes();
       expect(result).toEqual(mockTypes);
     });
 
@@ -224,7 +224,7 @@ describe('Journal API', () => {
         'fetch',
         mockFetch(() => new Response(JSON.stringify({ message: 'Unexpected error' }), { status: 500 })),
       );
-      await expect(getEntryTypes('valid-token')).rejects.toMatchObject({
+      await expect(getEntryTypes()).rejects.toMatchObject({
         status: 500,
         message: 'Unexpected error',
       });
@@ -233,7 +233,7 @@ describe('Journal API', () => {
     it('throws when VITE_XANO_JOURNAL_API_URL is not configured in getEntryTypes', async () => {
       vi.stubEnv('VITE_XANO_JOURNAL_API_URL', '');
 
-      await expect(getEntryTypes('valid-token')).rejects.toThrow('VITE_XANO_JOURNAL_API_URL is not configured');
+      await expect(getEntryTypes()).rejects.toThrow('VITE_XANO_JOURNAL_API_URL is not configured');
     });
   });
 
@@ -242,11 +242,11 @@ describe('Journal API', () => {
       const fetchMock = mockFetch((url, init) => {
         expect(url).toBe(`${API_BASE}/types/1`);
         expect(init?.method).toBe('GET');
-        expect(getAuthHeader(init)).toBe('Bearer valid-token');
+        expect(getAuthHeader(init)).toBeNull();
         return new Response(JSON.stringify(mockTypes[0]), { status: 200 });
       });
       vi.stubGlobal('fetch', fetchMock);
-      const result = await getEntryType('valid-token', '1');
+      const result = await getEntryType('1');
       expect(result).toEqual(mockTypes[0]);
     });
 
@@ -255,7 +255,7 @@ describe('Journal API', () => {
         'fetch',
         mockFetch(() => new Response(JSON.stringify({ message: 'Not Found.' }), { status: 404 })),
       );
-      await expect(getEntryType('valid-token', '1')).rejects.toMatchObject({
+      await expect(getEntryType('1')).rejects.toMatchObject({
         status: 404,
         message: 'Not Found.',
       });
@@ -264,7 +264,7 @@ describe('Journal API', () => {
     it('throws when VITE_XANO_JOURNAL_API_URL is not configured in getEntryType', async () => {
       vi.stubEnv('VITE_XANO_JOURNAL_API_URL', '');
 
-      await expect(getEntryType('valid-token', '1')).rejects.toThrow('VITE_XANO_JOURNAL_API_URL is not configured');
+      await expect(getEntryType('1')).rejects.toThrow('VITE_XANO_JOURNAL_API_URL is not configured');
     });
   });
 
