@@ -22,3 +22,7 @@ export interface Entry {
   type_id: number;
   mood_id: number;
 }
+
+export interface SuccessResponse {
+  success: boolean;
+}

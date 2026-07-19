@@ -1,5 +1,5 @@
 import { request } from '@/core/http/fetch-api';
-import type { Category, Entry, EntryType, Mood } from './types';
+import type { Category, Entry, EntryType, Mood, SuccessResponse } from './types';
 
 const withBaseUrl = (path: string): string => {
   const baseUrl = import.meta.env.VITE_XANO_JOURNAL_API_URL;
@@ -85,8 +85,8 @@ export const saveEntry = async (token: string, entry: Partial<Entry>): Promise<E
   });
 };
 
-export const removeEntry = async (token: string, entryId: string): Promise<void> => {
-  return request<void>(withBaseUrl(`/entries/${entryId}`), {
+export const removeEntry = async (token: string, entryId: string): Promise<SuccessResponse> => {
+  return request<SuccessResponse>(withBaseUrl(`/entries/${entryId}`), {
     method: 'DELETE',
     token,
   });
