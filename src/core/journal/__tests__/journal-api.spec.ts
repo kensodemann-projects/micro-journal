@@ -341,6 +341,8 @@ describe('Journal API', () => {
         });
         vi.stubGlobal('fetch', fetchMock);
         const result = await saveEntry('valid-token', {
+          date: '2026-01-01',
+          entry_time: 1767225600000,
           subject: 'New Entry',
           description: 'New Entry Description',
           category_id: mockCategories[0].id,
@@ -377,6 +379,8 @@ describe('Journal API', () => {
       );
       await expect(
         saveEntry('valid-token', {
+          date: '2026-01-01',
+          entry_time: 1767225600000,
           subject: 'New Entry',
           description: 'New Entry Description',
           category_id: mockCategories[0].id,
@@ -394,6 +398,8 @@ describe('Journal API', () => {
 
       await expect(
         saveEntry('valid-token', {
+          date: '2026-01-01',
+          entry_time: 1767225600000,
           subject: 'New Entry',
           description: 'New Entry Description',
           category_id: mockCategories[0].id,

@@ -23,14 +23,13 @@ export const getCategory = async (token: string, categoryId: string): Promise<Ca
   });
 };
 
-export const saveCategory = async (token: string, category: Partial<Category>): Promise<Category> => {
-  const method = category.id ? 'PATCH' : 'POST';
-  const url = category.id ? `/categories/${category.id}` : '/categories';
-  return request<Category>(withBaseUrl(url), {
-    method,
-    token,
-    body: JSON.stringify(category),
-  });
+export const saveCategory = async (
+  token: string,
+  category: Category | Omit<Category, 'id' | 'created_at'>,
+): Promise<Category> => {
+  const method = 'id' in category ? 'PATCH' : 'POST';
+  const url = 'id' in category ? `/categories/${category.id}` : '/categories';
+  return request<Category>(withBaseUrl(url), { method, token, body: JSON.stringify(category) });
 };
 
 export const getMoods = async (token: string): Promise<Mood[]> => {
@@ -75,14 +74,13 @@ export const getEntry = async (token: string, entryId: string): Promise<Entry> =
   });
 };
 
-export const saveEntry = async (token: string, entry: Partial<Entry>): Promise<Entry> => {
-  const method = entry.id ? 'PATCH' : 'POST';
-  const url = entry.id ? `/entries/${entry.id}` : '/entries';
-  return request<Entry>(withBaseUrl(url), {
-    method,
-    token,
-    body: JSON.stringify(entry),
-  });
+export const saveEntry = async (
+  token: string,
+  entry: Entry | Omit<Entry, 'id' | 'created_at' | 'user_id'>,
+): Promise<Entry> => {
+  const method = 'id' in entry ? 'PATCH' : 'POST';
+  const url = 'id' in entry ? `/entries/${entry.id}` : '/entries';
+  return request<Entry>(withBaseUrl(url), { method, token, body: JSON.stringify(entry) });
 };
 
 export const removeEntry = async (token: string, entryId: string): Promise<SuccessResponse> => {
