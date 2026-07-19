@@ -1,13 +1,13 @@
-import { getMe, postLogin, requestResetLink, updatePassword } from '@/core/auth/auth-api';
-import { clearToken, getToken, setToken } from '@/core/auth/token-storage';
-import type { LoginCredentials, User } from '@/core/auth/types';
+import { getMe, postLogin, requestResetLink, updatePassword } from '@/core/api/auth/auth-api';
+import { clearToken, getToken, setToken } from '@/core/api/auth/token-storage';
+import type { LoginCredentials, User } from '@/core/api/auth/types';
 import { useAuthentication } from '@/core/authentication';
-import { HttpError } from '@/core/http/fetch-api';
+import { HttpError } from '@/core/api/http/fetch-api';
 import { flushPromises } from '@vue/test-utils';
 import { beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 
-vi.mock('@/core/auth/auth-api');
-vi.mock('@/core/auth/token-storage');
+vi.mock('@/core/api/auth/auth-api');
+vi.mock('@/core/api/auth/token-storage');
 
 const mockUser: User = {
   id: 42,

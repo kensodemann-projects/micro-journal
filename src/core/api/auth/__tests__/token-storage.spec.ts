@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from 'vitest';
-import { clearToken, getToken, setToken } from '@/core/auth/token-storage';
+import { clearToken, getToken, setToken } from '@/core/api/auth/token-storage';
 
 describe('token-storage', () => {
   afterEach(() => {

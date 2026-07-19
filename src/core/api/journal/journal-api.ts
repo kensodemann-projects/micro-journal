@@ -1,4 +1,4 @@
-import { request } from '@/core/http/fetch-api';
+import { request } from '@/core/api/http/fetch-api';
 import type { Category, Entry, EntryType, Mood, SuccessResponse } from './types';
 
 const withBaseUrl = (path: string): string => {

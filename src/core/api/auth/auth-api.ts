@@ -1,5 +1,11 @@
-import type { ChangePasswordPayload, LoginCredentials, LoginResponse, MessageResponse, User } from '@/core/auth/types';
-import { request } from '@/core/http/fetch-api';
+import type {
+  ChangePasswordPayload,
+  LoginCredentials,
+  LoginResponse,
+  MessageResponse,
+  User,
+} from '@/core/api/auth/types';
+import { request } from '@/core/api/http/fetch-api';
 
 const withBaseUrl = (path: string): string => {
   const baseUrl = import.meta.env.VITE_XANO_AUTH_API_URL;
