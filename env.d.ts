@@ -4,6 +4,7 @@
 
 interface ImportMetaEnv {
   readonly VITE_XANO_AUTH_API_URL: string;
+  readonly VITE_XANO_JOURNAL_API_URL: string;
 }
 
 interface ImportMeta {
