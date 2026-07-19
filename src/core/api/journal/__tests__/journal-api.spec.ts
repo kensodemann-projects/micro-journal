@@ -13,7 +13,7 @@ import {
   saveCategory,
   saveEntry,
 } from '../journal-api';
-import { mockCategories, mockEntries, mockMoods, mockTypes } from './mock-data';
+import { mockCategories, mockEntries, mockMoods, mockTypes } from '../__mocks__/mock-data';
 
 const API_BASE = 'https://api.example.com';
 

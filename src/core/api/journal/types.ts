@@ -1,4 +1,4 @@
-interface ReferenceRecord {
+export interface ReferenceRecord {
   id: number;
   created_at: number;
   name: string;
