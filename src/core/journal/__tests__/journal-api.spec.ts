@@ -416,11 +416,11 @@ describe('Journal API', () => {
         expect(url).toBe(`${API_BASE}/entries/1`);
         expect(init?.method).toBe('DELETE');
         expect(getAuthHeader(init)).toBe('Bearer valid-token');
-        return new Response(JSON.stringify({ message: 'Entry removed successfully' }), { status: 200 });
+        return new Response(JSON.stringify({ sucess: true }), { status: 200 });
       });
       vi.stubGlobal('fetch', fetchMock);
       const result = await removeEntry('valid-token', '1');
-      expect(result).toEqual({ message: 'Entry removed successfully' });
+      expect(result).toEqual({ sucess: true });
     });
 
     it('throws an error if the request fails', async () => {
