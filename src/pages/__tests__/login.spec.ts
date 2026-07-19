@@ -1,5 +1,5 @@
+import { HttpError } from '@/core/api/http/fetch-api';
 import { useAuthentication } from '@/core/authentication';
-import { HttpError } from '@/core/http/fetch-api';
 import { flushPromises, mount } from '@vue/test-utils';
 import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import { useRouter } from 'vue-router';
