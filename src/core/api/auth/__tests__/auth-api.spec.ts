@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { getMe, postLogin, postMagicLinkLogin, requestResetLink, updatePassword } from '@/core/auth/auth-api';
+import { getMe, postLogin, postMagicLinkLogin, requestResetLink, updatePassword } from '@/core/api/auth/auth-api';
 import { getAuthHeader, mockFetch } from '@/test-utils/mock-fetch';
 
 const API_BASE = 'https://api.example.com';
