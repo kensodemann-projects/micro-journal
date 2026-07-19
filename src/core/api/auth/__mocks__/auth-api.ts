@@ -1,5 +1,11 @@
 import { vi, type Mock } from 'vitest';
-import type { ChangePasswordPayload, LoginCredentials, LoginResponse, MessageResponse, User } from '@/core/auth/types';
+import type {
+  ChangePasswordPayload,
+  LoginCredentials,
+  LoginResponse,
+  MessageResponse,
+  User,
+} from '@/core/api/auth/types';
 
 const defaultUser: User = {
   id: 1,
