@@ -6,7 +6,7 @@ const categories = ref<Category[]>([]);
 
 const loadCategories = async () => {
   if (categories.value.length === 0) {
-    categories.value = await getCategories('fake-token');
+    categories.value = await getCategories();
   }
 };
 
