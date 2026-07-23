@@ -46,4 +46,19 @@ describe('useCategories', () => {
 
     expect(loading.value).toBe(false);
   });
+
+  it('sets error when fetching categories fails', async () => {
+    const { getCategories } = await import('@/core/api/journal/journal-api');
+    const fetchError = new Error('Failed to fetch categories');
+    vi.mocked(getCategories).mockRejectedValue(fetchError);
+
+    const { useCategories } = await import('@/core/categories');
+    const { error, loading } = useCategories();
+    expect(loading.value).toBe(true);
+
+    await flushPromises();
+
+    expect(error.value).toBe(fetchError);
+    expect(loading.value).toBe(false);
+  });
 });
