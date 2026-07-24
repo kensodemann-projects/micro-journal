@@ -1,4 +1,4 @@
-import type { UseAuthentication } from '@/core/api/auth/types';
+import type { UseAuthentication } from '@/core/authentication';
 import { vi } from 'vitest';
 import { ref } from 'vue';
 
