@@ -23,7 +23,7 @@ export const getCategory = async (categoryId: string): Promise<Category> => {
 
 export const saveCategory = async (
   token: string,
-  category: Category | Omit<Category, 'id' | 'created_at'>,
+  category: Omit<Category, 'created_at'> | Omit<Category, 'id' | 'created_at'>,
 ): Promise<Category> => {
   const method = 'id' in category ? 'PATCH' : 'POST';
   const url = 'id' in category ? `/categories/${category.id}` : '/categories';
@@ -70,7 +70,7 @@ export const getEntry = async (token: string, entryId: string): Promise<Entry> =
 
 export const saveEntry = async (
   token: string,
-  entry: Entry | Omit<Entry, 'id' | 'created_at' | 'user_id'>,
+  entry: Omit<Entry, 'created_at' | 'user_id'> | Omit<Entry, 'id' | 'created_at' | 'user_id'>,
 ): Promise<Entry> => {
   const method = 'id' in entry ? 'PATCH' : 'POST';
   const url = 'id' in entry ? `/entries/${entry.id}` : '/entries';
