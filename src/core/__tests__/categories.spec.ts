@@ -182,4 +182,112 @@ describe('useCategories', () => {
       });
     });
   });
+
+  describe('update category', () => {
+    const categoryToUpdate = {
+      id: 1,
+      created_at: 1693526400000,
+      name: 'Updated Category',
+    };
+
+    describe('when a token exists', () => {
+      beforeEach(async () => {
+        const { getToken } = await import('@/core/api/auth/token-storage');
+        vi.mocked(getToken).mockReturnValue('123');
+      });
+
+      it('saves the updated category', async () => {
+        const { saveCategory } = await import('@/core/api/journal/journal-api');
+        vi.mocked(saveCategory).mockResolvedValue(categoryToUpdate);
+
+        const { useCategories } = await import('@/core/categories');
+        const { updateCategory } = useCategories();
+        await flushPromises();
+        updateCategory(categoryToUpdate.id, categoryToUpdate.name);
+        expect(saveCategory).toHaveBeenCalledWith('123', {
+          id: 1,
+          name: 'Updated Category',
+        });
+      });
+
+      it('resolves the updated category', async () => {
+        const { saveCategory } = await import('@/core/api/journal/journal-api');
+        vi.mocked(saveCategory).mockResolvedValue(categoryToUpdate);
+
+        const { useCategories } = await import('@/core/categories');
+        const { updateCategory } = useCategories();
+        await flushPromises();
+        const category = await updateCategory(categoryToUpdate.id, categoryToUpdate.name);
+        expect(category).toEqual(categoryToUpdate);
+      });
+
+      it('calls getCategories as part of the update process', async () => {
+        const { getCategories, saveCategory } = await import('@/core/api/journal/journal-api');
+        vi.mocked(saveCategory).mockResolvedValue(categoryToUpdate);
+        vi.mocked(getCategories).mockResolvedValue(mockCategories);
+
+        const { useCategories } = await import('@/core/categories');
+        const { updateCategory } = useCategories();
+        await flushPromises();
+        vi.mocked(getCategories).mockClear();
+
+        await updateCategory(categoryToUpdate.id, categoryToUpdate.name);
+        expect(getCategories).toHaveBeenCalledTimes(1);
+      });
+
+      describe('when saving fails', () => {
+        it('rejects the promise', async () => {
+          const { saveCategory } = await import('@/core/api/journal/journal-api');
+          vi.mocked(saveCategory).mockRejectedValue(new Error('Failed to save category'));
+
+          const { useCategories } = await import('@/core/categories');
+          const { updateCategory } = useCategories();
+          await flushPromises();
+          await expect(updateCategory(categoryToUpdate.id, categoryToUpdate.name)).rejects.toThrow(
+            'Failed to save category',
+          );
+        });
+
+        it('does not call getCategories', async () => {
+          const { getCategories, saveCategory } = await import('@/core/api/journal/journal-api');
+          vi.mocked(saveCategory).mockRejectedValue(new Error('Failed to save category'));
+          vi.mocked(getCategories).mockResolvedValue(mockCategories);
+
+          const { useCategories } = await import('@/core/categories');
+          const { updateCategory } = useCategories();
+          await flushPromises();
+          vi.mocked(getCategories).mockClear();
+          await expect(updateCategory(categoryToUpdate.id, categoryToUpdate.name)).rejects.toThrow();
+          expect(getCategories).not.toHaveBeenCalled();
+        });
+      });
+    });
+
+    describe('when a token does not exist', () => {
+      beforeEach(async () => {
+        const { getToken } = await import('@/core/api/auth/token-storage');
+        vi.mocked(getToken).mockReturnValue(null);
+      });
+
+      it('rejects the promise', async () => {
+        const { useCategories } = await import('@/core/categories');
+        const { updateCategory } = useCategories();
+        await flushPromises();
+        await expect(updateCategory(categoryToUpdate.id, categoryToUpdate.name)).rejects.toThrow('No token found');
+      });
+
+      it('does not call saveCategory or getCategories', async () => {
+        const { getCategories, saveCategory } = await import('@/core/api/journal/journal-api');
+        vi.mocked(saveCategory).mockResolvedValue(categoryToUpdate);
+
+        const { useCategories } = await import('@/core/categories');
+        const { updateCategory } = useCategories();
+        await flushPromises();
+        vi.mocked(getCategories).mockClear();
+        await expect(updateCategory(categoryToUpdate.id, categoryToUpdate.name)).rejects.toThrow();
+        expect(saveCategory).not.toHaveBeenCalled();
+        expect(getCategories).not.toHaveBeenCalled();
+      });
+    });
+  });
 });

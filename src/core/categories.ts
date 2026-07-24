@@ -36,9 +36,20 @@ export const useCategories = () => {
     return category;
   };
 
+  const updateCategory = async (id: number, name: string): Promise<Category> => {
+    const token = getToken();
+    if (!token) {
+      throw new Error('No token found');
+    }
+    const category = await saveCategory(token, { id, name });
+    categories.value = await getCategories();
+    return category;
+  };
+
   return {
     categories,
     createCategory,
+    updateCategory,
     loading,
     error,
   };
