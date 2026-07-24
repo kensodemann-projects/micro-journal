@@ -11,6 +11,7 @@ const error = ref<Error | null>(null);
 const loadCategories = (): void => {
   if (categories.value.length === 0 && !loadingPromise) {
     loading.value = true;
+    error.value = null;
     loadingPromise = getCategories()
       .then((cats) => (categories.value = cats))
       .catch((err) => {
