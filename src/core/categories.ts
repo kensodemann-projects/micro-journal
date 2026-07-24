@@ -27,7 +27,11 @@ export const useCategories = () => {
   loadCategories();
 
   const createCategory = async (name: string): Promise<Category> => {
-    const category = await saveCategory(getToken()!, { name });
+    const token = getToken();
+    if (!token) {
+      throw new Error('No token found');
+    }
+    const category = await saveCategory(token, { name });
     categories.value = await getCategories();
     return category;
   };
