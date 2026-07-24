@@ -1,6 +1,7 @@
 import { ref } from 'vue';
 import type { Category } from './api/journal/types';
-import { getCategories } from './api/journal/journal-api';
+import { getCategories, saveCategory } from './api/journal/journal-api';
+import { getToken } from './api/auth/token-storage';
 
 const categories = ref<Category[]>([]);
 let loadingPromise: Promise<void | Category[]> | null = null;
@@ -25,8 +26,13 @@ const loadCategories = (): void => {
 export const useCategories = () => {
   loadCategories();
 
+  const createCategory = (name: string): void => {
+    saveCategory(getToken()!, { name });
+  };
+
   return {
     categories,
+    createCategory,
     loading,
     error,
   };
