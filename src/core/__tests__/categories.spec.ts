@@ -1,6 +1,6 @@
+import { mockCategories } from '@/core/api/journal/__mocks__/mock-data';
 import { flushPromises } from '@vue/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { mockCategories } from '@/core/api/journal/__mocks__/mock-data';
 
 vi.mock('@/core/api/auth/token-storage');
 vi.mock('@/core/api/journal/journal-api');
@@ -86,6 +86,35 @@ describe('useCategories', () => {
         expect(saveCategory).toHaveBeenCalledWith('123', {
           name: 'New Category',
         });
+      });
+
+      it('resolves the new category', async () => {
+        const { saveCategory } = await import('@/core/api/journal/journal-api');
+        vi.mocked(saveCategory).mockResolvedValue({
+          id: 314,
+          created_at: 1716700800000,
+          name: 'New Category',
+        });
+
+        const { useCategories } = await import('@/core/categories');
+        const { createCategory } = useCategories();
+        await flushPromises();
+        const category = await createCategory('New Category');
+        expect(category).toEqual({
+          id: 314,
+          created_at: 1716700800000,
+          name: 'New Category',
+        });
+      });
+
+      it('rejects when saving fails', async () => {
+        const { saveCategory } = await import('@/core/api/journal/journal-api');
+        vi.mocked(saveCategory).mockRejectedValue(new Error('Failed to save category'));
+
+        const { useCategories } = await import('@/core/categories');
+        const { createCategory } = useCategories();
+        await flushPromises();
+        await expect(createCategory('New Category')).rejects.toThrow('Failed to save category');
       });
     });
   });

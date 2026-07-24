@@ -26,8 +26,10 @@ const loadCategories = (): void => {
 export const useCategories = () => {
   loadCategories();
 
-  const createCategory = (name: string): void => {
-    saveCategory(getToken()!, { name });
+  const createCategory = async (name: string): Promise<Category> => {
+    const category = await saveCategory(getToken()!, { name });
+    categories.value = await getCategories();
+    return category;
   };
 
   return {
