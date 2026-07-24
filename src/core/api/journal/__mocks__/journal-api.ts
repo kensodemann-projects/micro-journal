@@ -1,0 +1,35 @@
+import { vi, type Mock } from 'vitest';
+import type { Category, Entry, EntryType, Mood, SuccessResponse } from '../types';
+import { mockCategories, mockEntries, mockMoods, mockTypes } from './mock-data';
+
+export const getCategories: Mock<() => Promise<Category[]>> = vi.fn().mockResolvedValue(mockCategories);
+
+export const getCategory: Mock<(categoryId: string) => Promise<Category>> = vi
+  .fn()
+  .mockResolvedValue(mockCategories[0]);
+
+export const saveCategory: Mock<
+  (token: string, category: Category | Omit<Category, 'id' | 'created_at'>) => Promise<Category>
+> = vi.fn().mockResolvedValue(mockCategories[0]);
+
+export const getMoods: Mock<() => Promise<Mood[]>> = vi.fn().mockResolvedValue(mockMoods);
+
+export const getMood: Mock<(moodId: string) => Promise<Mood>> = vi.fn().mockResolvedValue(mockMoods[0]);
+
+export const getEntryTypes: Mock<() => Promise<EntryType[]>> = vi.fn().mockResolvedValue(mockTypes);
+
+export const getEntryType: Mock<(entryTypeId: string) => Promise<EntryType>> = vi.fn().mockResolvedValue(mockTypes[0]);
+
+export const getEntries: Mock<(token: string) => Promise<Entry[]>> = vi.fn().mockResolvedValue(mockEntries);
+
+export const getEntry: Mock<(token: string, entryId: string) => Promise<Entry>> = vi
+  .fn()
+  .mockResolvedValue(mockEntries[0]);
+
+export const saveEntry: Mock<
+  (token: string, entry: Entry | Omit<Entry, 'id' | 'created_at' | 'user_id'>) => Promise<Entry>
+> = vi.fn().mockResolvedValue(mockEntries[0]);
+
+export const removeEntry: Mock<(token: string, entryId: string) => Promise<SuccessResponse>> = vi
+  .fn()
+  .mockResolvedValue({ success: true });

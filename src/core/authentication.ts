@@ -1,14 +1,8 @@
 import { getMe, postLogin, requestResetLink, updatePassword } from '@/core/api/auth/auth-api';
 import { clearToken, getToken, setToken } from '@/core/api/auth/token-storage';
-import type {
-  ChangePasswordPayload,
-  LoginCredentials,
-  LoginResponse,
-  UseAuthentication,
-  User,
-} from '@/core/api/auth/types';
+import type { ChangePasswordPayload, LoginCredentials, LoginResponse, User } from '@/core/api/auth/types';
 import { HttpError } from '@/core/api/http/fetch-api';
-import { ref } from 'vue';
+import { ref, type Ref } from 'vue';
 
 const user = ref<User | null>(null);
 let sessionRestorePromise: Promise<boolean> | null = null;
@@ -44,6 +38,15 @@ const restoreSessionIfNeeded = async (): Promise<boolean> => {
   }
 
   return sessionRestorePromise;
+};
+
+export type UseAuthentication = {
+  user: Ref<User | null>;
+  isAuthenticated: () => Promise<boolean>;
+  login: (credentials: LoginCredentials) => Promise<LoginResponse>;
+  logout: () => Promise<void>;
+  sendPasswordReset: (payload: { email: string }) => Promise<void>;
+  changePassword: (payload: ChangePasswordPayload) => Promise<void>;
 };
 
 export const useAuthentication = (): UseAuthentication => {

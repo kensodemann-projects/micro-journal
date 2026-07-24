@@ -1,8 +1,8 @@
 import { getMe, postLogin, requestResetLink, updatePassword } from '@/core/api/auth/auth-api';
 import { clearToken, getToken, setToken } from '@/core/api/auth/token-storage';
 import type { LoginCredentials, User } from '@/core/api/auth/types';
-import { useAuthentication } from '@/core/authentication';
 import { HttpError } from '@/core/api/http/fetch-api';
+import { useAuthentication } from '@/core/authentication';
 import { flushPromises } from '@vue/test-utils';
 import { beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 
