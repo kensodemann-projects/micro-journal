@@ -1,7 +1,8 @@
 import type { Category } from '@/core/api/journal/types';
+import type { UseCategories } from '@/core/categories';
 import { mockCategories } from '@/core/api/journal/__mocks__/mock-data';
 import { vi } from 'vitest';
-import { ref, type Ref } from 'vue';
+import { ref } from 'vue';
 
 const createCategory = vi.fn().mockResolvedValue({
   id: 314,
@@ -13,14 +14,6 @@ const updateCategory = vi.fn().mockResolvedValue({
   created_at: 1693526400000,
   name: 'Updated Category',
 });
-
-type UseCategories = {
-  categories: Ref<Category[]>;
-  createCategory: (name: string) => Promise<Category>;
-  updateCategory: (id: number, name: string) => Promise<Category>;
-  loading: Ref<boolean>;
-  error: Ref<Error | null>;
-};
 
 export const useCategories: () => UseCategories = () => {
   return {

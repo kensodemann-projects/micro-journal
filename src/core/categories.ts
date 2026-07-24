@@ -1,4 +1,4 @@
-import { ref } from 'vue';
+import { ref, type Ref } from 'vue';
 import type { Category } from './api/journal/types';
 import { getCategories, saveCategory } from './api/journal/journal-api';
 import { getToken } from './api/auth/token-storage';
@@ -23,7 +23,15 @@ const loadCategories = (): void => {
   }
 };
 
-export const useCategories = () => {
+export type UseCategories = {
+  categories: Ref<Category[]>;
+  createCategory: (name: string) => Promise<Category>;
+  updateCategory: (id: number, name: string) => Promise<Category>;
+  loading: Ref<boolean>;
+  error: Ref<Error | null>;
+};
+
+export const useCategories = (): UseCategories => {
   loadCategories();
 
   const createCategory = async (name: string): Promise<Category> => {
