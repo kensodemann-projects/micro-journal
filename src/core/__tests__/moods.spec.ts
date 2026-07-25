@@ -2,7 +2,6 @@ import { mockMoods } from '@/core/api/journal/__mocks__/mock-data';
 import { flushPromises } from '@vue/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('@/core/api/auth/token-storage');
 vi.mock('@/core/api/journal/journal-api');
 
 describe('useMoods', () => {
