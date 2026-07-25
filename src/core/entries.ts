@@ -1,26 +1,34 @@
 import { ref, type Ref } from 'vue';
 import type { Entry } from './api/journal/types';
 import { getEntries } from './api/journal/journal-api';
+import { getToken } from './api/auth/token-storage';
 
 const entries = ref<Entry[]>([]);
 let loadingPromise: Promise<void | Entry[]> | null = null;
 const loading = ref(false);
 const error = ref<Error | null>(null);
 
-const loadEntries = (): void => {
+const loadEntriesIfRequired = (): void => {
   if (entries.value.length === 0 && !loadingPromise) {
-    loading.value = true;
-    error.value = null;
-    loadingPromise = getEntries('123')
-      .then((ents) => (entries.value = ents))
-      .catch((err) => {
-        error.value = err;
-      })
-      .finally(() => {
-        loadingPromise = null;
-        loading.value = false;
-      });
+    const token = getToken();
+    if (token) {
+      loadEntries(token);
+    }
   }
+};
+
+const loadEntries = (token: string): void => {
+  loading.value = true;
+  error.value = null;
+  loadingPromise = getEntries(token)
+    .then((ents) => (entries.value = ents))
+    .catch((err) => {
+      error.value = err;
+    })
+    .finally(() => {
+      loadingPromise = null;
+      loading.value = false;
+    });
 };
 
 export type UseEntries = {
@@ -30,7 +38,7 @@ export type UseEntries = {
 };
 
 export const useEntries = (): UseEntries => {
-  loadEntries();
+  loadEntriesIfRequired();
 
   return {
     entries,

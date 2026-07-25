@@ -15,6 +15,16 @@ describe('useEntries', () => {
   });
 
   describe('on load', () => {
+    it('gets the token from the token storage', async () => {
+      const { getToken } = await import('@/core/api/auth/token-storage');
+      vi.mocked(getToken).mockReturnValue('123');
+
+      const { useEntries } = await import('@/core/entries');
+      useEntries();
+      expect(getToken).toHaveBeenCalledExactlyOnceWith();
+      await flushPromises();
+    });
+
     describe('when a token exists', () => {
       beforeEach(async () => {
         const { getToken } = await import('@/core/api/auth/token-storage');
@@ -67,6 +77,22 @@ describe('useEntries', () => {
 
         expect(error.value).toBe(fetchError);
         expect(loading.value).toBe(false);
+      });
+    });
+
+    describe('when no token exists', () => {
+      beforeEach(async () => {
+        const { getToken } = await import('@/core/api/auth/token-storage');
+        vi.mocked(getToken).mockReturnValue(null);
+      });
+
+      it('does not load the entries', async () => {
+        const { getEntries } = await import('@/core/api/journal/journal-api');
+        const { useEntries } = await import('@/core/entries');
+        const { entries } = useEntries();
+        await flushPromises();
+        expect(entries.value).toEqual([]);
+        expect(getEntries).not.toHaveBeenCalled();
       });
     });
   });
