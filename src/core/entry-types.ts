@@ -12,7 +12,7 @@ const loadEntryTypes = (): void => {
     loading.value = true;
     error.value = null;
     loadingPromise = getEntryTypes()
-      .then((cats) => (entryTypes.value = cats))
+      .then((types) => (entryTypes.value = types))
       .catch((err) => {
         error.value = err;
       })
