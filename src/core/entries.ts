@@ -35,14 +35,20 @@ export type UseEntries = {
   entries: Ref<Entry[]>;
   loading: Ref<boolean>;
   error: Ref<Error | null>;
+  clearEntries: () => void;
 };
 
 export const useEntries = (): UseEntries => {
   loadEntriesIfRequired();
 
+  const clearEntries = (): void => {
+    entries.value = [];
+  };
+
   return {
     entries,
     loading,
     error,
+    clearEntries,
   };
 };

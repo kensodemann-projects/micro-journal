@@ -96,4 +96,22 @@ describe('useEntries', () => {
       });
     });
   });
+
+  describe('clear entries', () => {
+    beforeEach(async () => {
+      const { getToken } = await import('@/core/api/auth/token-storage');
+      const { getEntries } = await import('@/core/api/journal/journal-api');
+      vi.mocked(getToken).mockReturnValue('123');
+      vi.mocked(getEntries).mockResolvedValue(mockEntries);
+    });
+    it('removes the previously loaded entities', async () => {
+      const { useEntries } = await import('@/core/entries');
+      useEntries();
+      await flushPromises();
+
+      const { entries, clearEntries } = useEntries();
+      clearEntries();
+      expect(entries.value).toEqual([]);
+    });
+  });
 });
