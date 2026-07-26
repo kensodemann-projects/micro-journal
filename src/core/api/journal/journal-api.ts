@@ -1,5 +1,5 @@
 import { request } from '@/core/api/http/fetch-api';
-import type { Category, Entry, EntryType, Mood, SuccessResponse } from './types';
+import type { Category, EditableEntry, EditableEntryWithId, Entry, EntryType, Mood, SuccessResponse } from './types';
 
 const withBaseUrl = (path: string): string => {
   const baseUrl = import.meta.env.VITE_XANO_JOURNAL_API_URL;
@@ -68,10 +68,7 @@ export const getEntry = async (token: string, entryId: string): Promise<Entry> =
   });
 };
 
-export const saveEntry = async (
-  token: string,
-  entry: Omit<Entry, 'created_at' | 'user_id'> | Omit<Entry, 'id' | 'created_at' | 'user_id'>,
-): Promise<Entry> => {
+export const saveEntry = async (token: string, entry: EditableEntry | EditableEntryWithId): Promise<Entry> => {
   const method = 'id' in entry ? 'PATCH' : 'POST';
   const url = 'id' in entry ? `/entries/${entry.id}` : '/entries';
   return request<Entry>(withBaseUrl(url), { method, token, body: JSON.stringify(entry) });

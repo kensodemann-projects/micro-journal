@@ -23,6 +23,8 @@ export interface Entry {
   mood_id: number;
 }
 
+export type EditableEntryWithId = Omit<Entry, 'created_at' | 'user_id'>;
+export type EditableEntry = Omit<EditableEntryWithId, 'id'>;
 export interface SuccessResponse {
   success: boolean;
 }

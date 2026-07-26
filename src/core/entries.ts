@@ -1,5 +1,5 @@
 import { ref, type Ref } from 'vue';
-import type { Entry } from './api/journal/types';
+import type { EditableEntry, Entry } from './api/journal/types';
 import { getEntries } from './api/journal/journal-api';
 import { getToken } from './api/auth/token-storage';
 
@@ -36,6 +36,8 @@ export type UseEntries = {
   loading: Ref<boolean>;
   error: Ref<Error | null>;
   clearEntries: () => void;
+  createEntry: (entry: EditableEntry) => Promise<Entry>;
+  updateEntry: (id: number, entry: EditableEntry) => Promise<Entry>;
 };
 
 export const useEntries = (): UseEntries => {
@@ -45,10 +47,20 @@ export const useEntries = (): UseEntries => {
     entries.value = [];
   };
 
+  const createEntry = async (entry: EditableEntry): Promise<Entry> => ({ ...entry, id: 0, created_at: 0, user_id: 0 });
+  const updateEntry = async (id: number, entry: EditableEntry): Promise<Entry> => ({
+    ...entry,
+    id,
+    created_at: 0,
+    user_id: 0,
+  });
+
   return {
     entries,
     loading,
     error,
     clearEntries,
+    createEntry,
+    updateEntry,
   };
 };
