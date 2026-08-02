@@ -1,6 +1,6 @@
 import { ref, type Ref } from 'vue';
 import type { EditableEntry, Entry } from './api/journal/types';
-import { getEntries } from './api/journal/journal-api';
+import { getEntries, saveEntry } from './api/journal/journal-api';
 import { getToken } from './api/auth/token-storage';
 
 const entries = ref<Entry[]>([]);
@@ -47,7 +47,14 @@ export const useEntries = (): UseEntries => {
     entries.value = [];
   };
 
-  const createEntry = async (entry: EditableEntry): Promise<Entry> => ({ ...entry, id: 0, created_at: 0, user_id: 0 });
+  const createEntry = async (entry: EditableEntry): Promise<Entry> => {
+    const token = getToken();
+    if (!token) {
+      throw new Error('No token found');
+    }
+    return saveEntry(token, entry);
+  };
+
   const updateEntry = async (id: number, entry: EditableEntry): Promise<Entry> => ({
     ...entry,
     id,
